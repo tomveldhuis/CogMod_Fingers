@@ -9,9 +9,10 @@ import SwiftUI
 
 @main
 struct FingersApp: App {
+    let game = FingersViewModel()
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            FingersView(fingersGame: game)
         }
     }
 }
