@@ -10,6 +10,7 @@ import SwiftUI
 class FingersViewModel: ObservableObject {
     private var model: FingersModel
     
+    
     init() {
         model = FingersModel()
     }

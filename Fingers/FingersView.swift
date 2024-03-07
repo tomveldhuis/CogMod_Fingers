@@ -7,30 +7,44 @@
 
 import SwiftUI
 
+struct PlayerView: Identifiable {
+    let name: String
+    let position: CGPoint?
+    var id: String { name }
+    
+    func getButton(size: CGFloat) -> some View {
+        return Circle()
+            .frame(width: size, height: size)
+            .position(self.position!)
+            .onLongPressGesture(minimumDuration: .infinity) {
+                //print("Finished")
+            } onPressingChanged: { isPressing in
+                if isPressing {
+                    print(self.id)
+                } else {
+                    print("Finished")
+                }
+            }
+    }
+}
+
 struct FingersView: View {
     @ObservedObject var fingersGame: FingersViewModel
     @State private var showPredictPopup = false
     @State private var selectedNumberIndex: Int? = nil
     
-    // Represents a player in the view
-    private struct Player: Identifiable {
-        let name: String
-        let position: CGPoint?
-        var id: String { name }
-    }
-    
     // Find the coordinates for players in the view
-    private func findPlayers(n: Int, bounds: CGSize, circleSize: CGFloat) -> [Player] {
+    private func findPlayers(n: Int, bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
         let x = bounds.width / 2
         let y = bounds.height / 2
         var startAngle = Angle.degrees(-90)
         let angleInc = Angle.degrees(Double(360 / n))
-        var players: [Player] = []
+        var players: [PlayerView] = []
         
         var path = Path()
         for id in 1...n {
             path.addArc(center: CGPoint(x: x, y: y), radius: x - circleSize, startAngle: startAngle, endAngle: startAngle + angleInc, clockwise: true)
-            players.append(Player(name: id.description, position: path.currentPoint))
+            players.append(PlayerView(name: id.description, position: path.currentPoint))
             startAngle += angleInc
         }
         return players
@@ -62,14 +76,17 @@ struct FingersView: View {
             let players = findPlayers(n: nr_players, bounds: size, circleSize: CGFloat(circleSize))
             
             ZStack(content: {
+                // Big red circle
                 Circle()
                     .stroke(.red, lineWidth: 5)
                     .frame(width: size.width - 2 * CGFloat(circleSize), height: size.height - 2 * CGFloat(circleSize))
+                
                 ForEach(players) { player in
-                    Circle()
-                        .frame(width: CGFloat(circleSize), height: CGFloat(circleSize))
-                        .position(player.position!)
+                    // Circle for each player
+                    player.getButton(size: CGFloat(circleSize))
                 }
+                
+                
             })
         }
         
