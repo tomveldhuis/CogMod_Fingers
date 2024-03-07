@@ -9,10 +9,19 @@ import SwiftUI
 
 @main
 struct FingersApp: App {
+    @State private var showLandingView = true
+    
     let game = FingersViewModel()
     var body: some Scene {
         WindowGroup {
-            FingersView(fingersGame: game)
+            if self.showLandingView {
+                LandingView(showLandingView: $showLandingView)
+                    .transition(.slide)
+            }
+            else {
+                FingersView(fingersGame: game)
+                    .transition(.slide)
+            }
         }
     }
 }
