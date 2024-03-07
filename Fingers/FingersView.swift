@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct PlayerView: Identifiable {
-    let name: String
+    @State var player: Player
     let position: CGPoint?
-    var id: String { name }
+    var id: String { player.name }
     
-    func getButton(size: CGFloat) -> some View {
+    func getButton(size: CGFloat, gameobj: FingersViewModel) -> some View {
         return Circle()
             .frame(width: size, height: size)
             .position(self.position!)
@@ -20,34 +20,41 @@ struct PlayerView: Identifiable {
                 //print("Finished")
             } onPressingChanged: { isPressing in
                 if isPressing {
+                    self.player.isOnCup = true
+                    gameobj.model.game.outputOnCup()
                     print(self.id)
                 } else {
-                    print("Finished")
+                    self.player.isOnCup = false
+                    gameobj.model.game.outputOnCup()
                 }
             }
     }
 }
 
+
 struct FingersView: View {
     @ObservedObject var fingersGame: FingersViewModel
     @State private var showPredictPopup = false
     @State private var selectedNumberIndex: Int? = nil
+//    private var centerView: any View
     
     // Find the coordinates for players in the view
-    private func findPlayers(n: Int, bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
+    private func createPlayerViews(players: [Player], bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
+        print("in create player views")
+//        var playersD: [Binding<Player>] = self.fingersGame.model.game.players
         let x = bounds.width / 2
         let y = bounds.height / 2
         var startAngle = Angle.degrees(-90)
-        let angleInc = Angle.degrees(Double(360 / n))
-        var players: [PlayerView] = []
+        let angleInc = Angle.degrees(Double(360 / players.count))
+        var playerViews: [PlayerView] = []
         
         var path = Path()
-        for id in 1...n {
+        for playerD in self.fingersGame.model.game.players {
             path.addArc(center: CGPoint(x: x, y: y), radius: x - circleSize, startAngle: startAngle, endAngle: startAngle + angleInc, clockwise: true)
-            players.append(PlayerView(name: id.description, position: path.currentPoint))
+            playerViews.append(PlayerView(player: playerD, position: path.currentPoint))
             startAngle += angleInc
         }
-        return players
+        return playerViews
     }
     
     private func generateNumberedButtons(numberOfPlayers: Int) -> [NumberButton] {
@@ -65,15 +72,15 @@ struct FingersView: View {
     
     // The ContentView
     var body: some View {
-        
-        let nr_players = 8
+        var players: [Player] = self.fingersGame.getPlayers()
+        let nr_players = players.count
         
         GeometryReader { proxy in
             // Parameters
             let circleSize = 50
             
             let size = proxy.size
-            let players = findPlayers(n: nr_players, bounds: size, circleSize: CGFloat(circleSize))
+            let playerViews = createPlayerViews(players: players, bounds: size, circleSize: CGFloat(circleSize))
             
             ZStack(content: {
                 // Big red circle
@@ -81,9 +88,9 @@ struct FingersView: View {
                     .stroke(.red, lineWidth: 5)
                     .frame(width: size.width - 2 * CGFloat(circleSize), height: size.height - 2 * CGFloat(circleSize))
                 
-                ForEach(players) { player in
+                ForEach(playerViews) { playerView in
                     // Circle for each player
-                    player.getButton(size: CGFloat(circleSize))
+                    playerView.getButton(size: CGFloat(circleSize), gameobj: fingersGame)
                 }
                 
                 
