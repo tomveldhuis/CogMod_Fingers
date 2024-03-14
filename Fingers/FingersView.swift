@@ -15,12 +15,12 @@ enum gameState {
 }
 
 struct PlayerView: Identifiable {
-    let name: String
+    @State var player: Player
     let position: CGPoint?
-    var id: String { name }
+    var id: String { player.name }
     @State var pressed: Bool = false
     
-    func getButton(size: CGFloat) -> some View {
+    func getButton(size: CGFloat, gameobj: FingersViewModel) -> some View {
         return ZStack {
             Circle()
             Text(id.description)
@@ -33,14 +33,19 @@ struct PlayerView: Identifiable {
         } onPressingChanged: { isPressing in
             if isPressing {
                 pressed = true
+                self.player.isOnCup = true
+                gameobj.model.game.outputOnCup()
                 print(self.id)
             } else {
+                self.player.isOnCup = false
+                gameobj.model.game.outputOnCup()
                 pressed = false
                 print("Finished")
             }
         }
     }
 }
+
 
 struct FingersView: View {
     //---------------------------------
@@ -64,7 +69,7 @@ struct FingersView: View {
         GeometryReader { proxy in
             // Parameters
             let size = proxy.size
-            let players = findPlayers(n: nr_players, bounds: size, circleSize: CGFloat(circleSize))
+            let players = createPlayerViews(players: fingersGame.getPlayers(), bounds: size, circleSize: CGFloat(circleSize))
 
             // View of the screen
             VStack(content:{
@@ -80,7 +85,7 @@ struct FingersView: View {
                     
                     // Circle for each player
                     ForEach(players) { player in
-                        player.getButton(size: CGFloat(circleSize))
+                        player.getButton(size: CGFloat(circleSize), gameobj: fingersGame)
                     }
                     
                     // Logic for countdown timer
@@ -139,20 +144,21 @@ struct FingersView: View {
     //---------------------------------
     
     // Find the coordinates for players in the view
-    private func findPlayers(n: Int, bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
+    private func createPlayerViews(players: [Player], bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
+//        var playersD: [Binding<Player>] = self.fingersGame.model.game.players
         let x = bounds.width / 2
         let y = bounds.height / 2
         var startAngle = Angle.degrees(-90)
-        let angleInc = Angle.degrees(Double(360 / n))
-        var players: [PlayerView] = []
+        let angleInc = Angle.degrees(Double(360 / players.count))
+        var playerViews: [PlayerView] = []
         
         var path = Path()
-        for id in 1...n {
+        for playerD in self.fingersGame.model.game.players {
             path.addArc(center: CGPoint(x: x, y: y), radius: x - circleSize, startAngle: startAngle, endAngle: startAngle + angleInc, clockwise: true)
-            players.append(PlayerView(name: id.description, position: path.currentPoint))
+            playerViews.append(PlayerView(player: playerD, position: path.currentPoint))
             startAngle += angleInc
         }
-        return players
+        return playerViews
     }
     
     // Generate numbered buttons for PredictView
@@ -167,10 +173,6 @@ struct FingersView: View {
             buttons.append(button)
         }
         return buttons
-    }
-    
-    private func printPressed() {
-        
     }
 }
 
