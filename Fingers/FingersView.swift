@@ -66,9 +66,11 @@ struct FingersView: View {
     @State private var selectedNumberIndex: Int? = nil
     @State private var counter = 3
     @State private var textToUpdate = ""
-    @State private var botPredictionCounter = 5;
+    @State private var botPredictionCounter = 2;
+    @State private var resultTimerCounter = 3
     
-    private let MAX_BOT_PREDICTION_TIME = 5; //seconds
+    private let MAX_BOT_PREDICTION_TIME = 2; //seconds
+    private let MAX_RESULT_TIME = 3; //seconds
     
     let circleSize = 50
     
@@ -129,36 +131,46 @@ struct FingersView: View {
                         }
                         .position(x: size.width / 2, y: size.width / 2)
                     case .Predict:
-                        // if player[currPlayerIndex] == player
-                    
-                    var players = fingersGame.getPlayers()
-                    if players[fingersGame.model.game.currPlayerIndex] is Human {
-                        PredictView(
-                            playerID: "1",
-                            buttons: generateNumberedButtons(numberOfPlayers: fingersGame.getPlayers().count)
-                        )
-                        .padding()
-                        .cornerRadius(20)
-                    } else {
-                        let botPredictionTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                        Text("Bot is predicting...")
-                            .font(.system(size: 48))
-                            .onReceive(botPredictionTimer) { time in
-                                if botPredictionCounter == 0 {
-                                    state = gameState.Result
-                                    botPredictionCounter = MAX_BOT_PREDICTION_TIME
-                                    botPredictionTimer.upstream.connect().cancel()
-                                } else {
-                                    botPredictionCounter -= 1
+                        var players = fingersGame.getPlayers()
+                        if players[fingersGame.model.game.currPlayerIndex] is Human {
+                            PredictView(
+                                playerID: "1",
+                                buttons: generateNumberedButtons(numberOfPlayers: fingersGame.getPlayers().count)
+                            )
+                            .padding()
+                            .cornerRadius(20)
+                        } else {
+                            let botPredictionTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                            Text("Bot is predicting...")
+                                .font(.system(size: 48))
+                                .onReceive(botPredictionTimer) { time in
+                                    if botPredictionCounter == 0 {
+                                        state = gameState.Countdown
+                                        botPredictionCounter = MAX_BOT_PREDICTION_TIME
+                                        botPredictionTimer.upstream.connect().cancel()
+                                    } else {
+                                        botPredictionCounter -= 1
+                                    }
                                 }
-                            }
-                    }
+                        }
                     case .Countdown:
                         let prediction = selectedNumberIndex!.description
                         Text("Player predicted \(prediction) fingers remaining")
                             .position(x: size.width / 2, y: size.width / 2)
                     case .Result:
-                        Text("")
+                        let resultTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                        Text("Result")
+                            .font(.system(size: 48))
+                            .onReceive(resultTimer) { time in
+                                if resultTimerCounter == 0 {
+                                    fingersGame.nextPlayer()
+                                    state = gameState.Initial
+                                    resultTimerCounter = MAX_RESULT_TIME
+                                    resultTimer.upstream.connect().cancel()
+                                } else {
+                                    resultTimerCounter -= 1
+                                }
+                            }
                 }
             })
         }
