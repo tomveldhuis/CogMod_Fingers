@@ -22,6 +22,14 @@ class FingersViewModel: ObservableObject {
         return self.model.game.players
     }
     
+    func nextPlayer() {
+        if (model.game.currPlayerIndex < model.game.maxPlayers) {
+            model.game.currPlayerIndex += 1;
+        } else {
+            model.game.currPlayerIndex = 0;
+        }
+    }
+    
     func setPlayerScores(){
         
     }

@@ -66,6 +66,9 @@ struct FingersView: View {
     @State private var selectedNumberIndex: Int? = nil
     @State private var counter = 3
     @State private var textToUpdate = ""
+    @State private var botPredictionCounter = 5;
+    
+    private let MAX_BOT_PREDICTION_TIME = 5; //seconds
     
     let circleSize = 50
     
@@ -126,18 +129,30 @@ struct FingersView: View {
                         }
                         .position(x: size.width / 2, y: size.width / 2)
                     case .Predict:
-//                        if predictPlayers.isEmpty {
-//
-//                        } else {
-//
-//                        }
+                        // if player[currPlayerIndex] == player
+                    
+                    var players = fingersGame.getPlayers()
+                    if players[fingersGame.model.game.currPlayerIndex] is Human {
                         PredictView(
                             playerID: "1",
                             buttons: generateNumberedButtons(numberOfPlayers: fingersGame.getPlayers().count)
                         )
                         .padding()
                         .cornerRadius(20)
-                        //.opacity(showPredictPopup ? 1 : 0)
+                    } else {
+                        let botPredictionTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+                        Text("Bot is predicting...")
+                            .font(.system(size: 48))
+                            .onReceive(botPredictionTimer) { time in
+                                if botPredictionCounter == 0 {
+                                    state = gameState.Result
+                                    botPredictionCounter = MAX_BOT_PREDICTION_TIME
+                                    botPredictionTimer.upstream.connect().cancel()
+                                } else {
+                                    botPredictionCounter -= 1
+                                }
+                            }
+                    }
                     case .Countdown:
                         let prediction = selectedNumberIndex!.description
                         Text("Player predicted \(prediction) fingers remaining")

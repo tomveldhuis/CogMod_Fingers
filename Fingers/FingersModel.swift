@@ -29,11 +29,14 @@ class FingersModel {
 
 class Game {
     var players: [Player] = []
+    let maxPlayers: Int
+    var currPlayerIndex: Int = 0
     
     init(n_humans: Int, n_bots: Int){
-//        var players: [Player] = []
-        var n_humans = n_humans
-        var n_bots = n_bots
+        let n_humans = n_humans
+        let n_bots = n_bots
+        maxPlayers = n_humans + n_bots;
+        
         var j = 0
         
         for i in 1...n_bots{
@@ -59,7 +62,6 @@ class Game {
         print("N on cup: \(i)")
     }
 }
-
 
 protocol Player {
     var name: String { get }
@@ -106,7 +108,7 @@ class Bot: Player {
     init(name: String, number: Int) {
         self.name = name
         self.number = number
-        self.isOnCup = false
+        self.isOnCup = true
         self.isPredicting = false
         self.score = 0
         

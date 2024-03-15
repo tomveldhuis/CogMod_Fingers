@@ -25,6 +25,9 @@ struct PredictView: View {
     
     var body: some View {
         VStack {
+            
+            
+            
             Text("Player \(self.playerID):\nPredict the number of fingers remaining")
                 .font(.title)
                 .padding()
