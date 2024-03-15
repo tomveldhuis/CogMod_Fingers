@@ -12,8 +12,8 @@ struct LandingView: View {
     
     private let MAX_PLAYERS: Int = 10;
     
-    @State private var humanPlayerCount: Int = 1;
-    @State private var botPlayerCount: Int = 3;
+    @Binding var humanPlayerCount: Int;
+    @Binding var botPlayerCount: Int;
     
     var body: some View {
         GeometryReader { geometry in

@@ -7,8 +7,16 @@
 
 import Foundation
 
-struct FingersModel {
-    var game = Game(n_humans: 1, n_bots: 2)
+class FingersModel {
+    var nr_humans: Int
+    var nr_bots: Int
+    var game: Game
+    
+    init(n_humans: Int, n_bots: Int){
+        self.nr_humans = n_humans
+        self.nr_bots = n_bots
+        self.game = Game(n_humans: nr_humans, n_bots: nr_bots)
+    }
     /// The ACT-R model
 //    internal var model = Model()
     
@@ -29,11 +37,11 @@ class Game {
         var j = 0
         
         for i in 1...n_bots{
-            self.players.append(Bot(name:"Bot \(i)", number:j))
+            self.players.append(Bot(name:"B\(i)", number:j))
             j += 1
         }
         for i in 1...n_humans{
-            self.players.append(Human(name:"Human \(i)", number:j))
+            self.players.append(Human(name:"H\(i)", number:j))
             j += 1
         }
         
@@ -64,6 +72,7 @@ protocol Player {
 
 class Human: Player {
     var name: String
+    var id: String
     var number: Int
     var score: Int
     
@@ -72,8 +81,9 @@ class Human: Player {
     
     init(name: String, number: Int) {
         self.name = name
+        self.id = self.name
         self.number = number
-        self.isOnCup = false
+        self.isOnCup = true
         self.isPredicting = false
         self.score = 0
     }

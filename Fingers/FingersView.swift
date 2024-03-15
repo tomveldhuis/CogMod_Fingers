@@ -20,9 +20,18 @@ struct PlayerView: Identifiable {
     var id: String { player.name }
     @State var pressed: Bool = false
     
-    func getButton(size: CGFloat, gameobj: FingersViewModel) -> some View {
+    func getButton(size: CGFloat, gameobj: FingersViewModel, checkCup: Bool) -> some View {
+        var color = Color.black
+        if checkCup {
+            if player.isOnCup {
+                color = Color.green
+            } else {
+                color = Color.red
+            }
+        }
         return ZStack {
             Circle()
+                .foregroundColor(color)
             Text(id.description)
                 .foregroundColor(.white)
         }
@@ -58,8 +67,9 @@ struct FingersView: View {
     @State private var counter = 3
     @State private var textToUpdate = ""
     
-    let nr_players = 5
     let circleSize = 50
+    
+    var predictPlayers = ["1", "3", "4"]
     
     //---------------------------------
     //---------- Content view ---------
@@ -73,46 +83,40 @@ struct FingersView: View {
 
             // View of the screen
             VStack(content:{
-                // ----------------------------------------------
-                // -------- View of the game environment --------
-                // ----------------------------------------------
+                //--------------------------------
+                //--- View of the upper screen ---
+                //--------------------------------
                 
                 ZStack(content: {
                     // Big red circle
                     Circle()
-                        .stroke(.red, lineWidth: 5)
+                        .stroke(.blue, lineWidth: 5)
                         .frame(width: size.width - 2 * CGFloat(circleSize), height: size.height)
                     
                     // Circle for each player
                     ForEach(players) { player in
-                        player.getButton(size: CGFloat(circleSize), gameobj: fingersGame)
+                        player.getButton(size: CGFloat(circleSize), gameobj: fingersGame, checkCup: false)
                     }
                     
-                    // Logic for countdown timer
-                    if state == gameState.Countdown {
-                        let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                        Text(textToUpdate)
-                            .font(.system(size: 48))
-                            .onReceive(timer) { time in
-                                if counter == 0 {
-                                    state = gameState.Result
-                                    timer.upstream.connect().cancel()
-                                } else {
-                                    textToUpdate = counter.description
-                                    counter -= 1
-                                }
+                    // View logic
+                    switch(state){
+                        case .Countdown:
+                            countDownTimerView()
+                        case .Result:
+                            ForEach(players) { player in
+                                player.getButton(size: CGFloat(circleSize), gameobj: fingersGame, checkCup: true)
                             }
+                        
+                            Text("Time!")
+                                .font(.system(size: 48))
+                        default:
+                            Text("")
                     }
-                    if state == gameState.Result {
-                        Text("Time!")
-                            .font(.system(size: 48))
-                    }
-                    
                 })
                 .frame(width: size.width, height: size.height / 2)
                 
                 //---------------------------------
-                //----------- View logic ----------
+                //--- View of the bottom screen ---
                 //---------------------------------
                 
                 switch(state){
@@ -122,8 +126,14 @@ struct FingersView: View {
                         }
                         .position(x: size.width / 2, y: size.width / 2)
                     case .Predict:
+//                        if predictPlayers.isEmpty {
+//
+//                        } else {
+//
+//                        }
                         PredictView(
-                            buttons: generateNumberedButtons(numberOfPlayers: nr_players)
+                            playerID: "1",
+                            buttons: generateNumberedButtons(numberOfPlayers: fingersGame.getPlayers().count)
                         )
                         .padding()
                         .cornerRadius(20)
@@ -161,6 +171,25 @@ struct FingersView: View {
         return playerViews
     }
     
+    private func countDownTimerView() -> some View {
+        let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+        return Text(textToUpdate)
+            .font(.system(size: 48))
+            .onReceive(timer) { time in
+                if counter == 0 {
+                    state = gameState.Result
+                    timer.upstream.connect().cancel()
+                } else {
+                    textToUpdate = counter.description
+                    counter -= 1
+                }
+            }
+    }
+    
+    private func generatePredictViews(players: [String]) -> some View {
+        return Text("")
+    }
+    
     // Generate numbered buttons for PredictView
     private func generateNumberedButtons(numberOfPlayers: Int) -> [NumberButton] {
         var buttons: [NumberButton] = []
@@ -174,11 +203,23 @@ struct FingersView: View {
         }
         return buttons
     }
+    
+    private func generateNumberedButtons2(numberOfPlayers: Int, predictPlayers: [String]) -> [NumberButton] {
+        var buttons: [NumberButton] = []
+        for index in 0..<numberOfPlayers+1 {
+            let button = NumberButton(label: "\(index)", action: {
+                print("Player predicted \(index) remaining")
+                selectedNumberIndex = index
+            })
+            buttons.append(button)
+        }
+        return buttons
+    }
 }
 
 struct FingersView_Previews: PreviewProvider {
     static var previews: some View {
-        let model = FingersViewModel()
+        let model = FingersViewModel(n_humans: 1, n_bots: 3)
         FingersView(fingersGame: model)
     }
 }

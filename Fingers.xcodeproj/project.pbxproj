@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		23E68CFE2B920D96006DCFDB /* PredictView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23E68CFD2B920D96006DCFDB /* PredictView.swift */; };
+		E285E0742BA2EB4500C27CB7 /* LandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E285E0732BA2EB4500C27CB7 /* LandingView.swift */; };
 		E2B699952B8F8B8100246E91 /* FingersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699942B8F8B8100246E91 /* FingersModel.swift */; };
 		E2B699972B8F8DF000246E91 /* FingersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699962B8F8DF000246E91 /* FingersViewModel.swift */; };
 		E2B699AA2B8F974500246E91 /* SlotAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B6999B2B8F974500246E91 /* SlotAction.swift */; };
@@ -53,6 +54,7 @@
 
 /* Begin PBXFileReference section */
 		23E68CFD2B920D96006DCFDB /* PredictView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PredictView.swift; sourceTree = "<group>"; };
+		E285E0732BA2EB4500C27CB7 /* LandingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LandingView.swift; sourceTree = "<group>"; };
 		E2B699942B8F8B8100246E91 /* FingersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersModel.swift; sourceTree = "<group>"; };
 		E2B699962B8F8DF000246E91 /* FingersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersViewModel.swift; sourceTree = "<group>"; };
 		E2B6999B2B8F974500246E91 /* SlotAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlotAction.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			children = (
 				E2B6999A2B8F974500246E91 /* ACT-R */,
 				E2D01AAD2B83943400370E22 /* FingersApp.swift */,
+				E285E0732BA2EB4500C27CB7 /* LandingView.swift */,
 				E2D01AAF2B83943400370E22 /* FingersView.swift */,
 				E2B699942B8F8B8100246E91 /* FingersModel.swift */,
 				E2B699962B8F8DF000246E91 /* FingersViewModel.swift */,
@@ -328,6 +331,7 @@
 				23E68CFE2B920D96006DCFDB /* PredictView.swift in Sources */,
 				E2D01AB02B83943400370E22 /* FingersView.swift in Sources */,
 				E2D01AAE2B83943400370E22 /* FingersApp.swift in Sources */,
+				E285E0742BA2EB4500C27CB7 /* LandingView.swift in Sources */,
 				E2B699AD2B8F974500246E91 /* Procedural.swift in Sources */,
 				E2B699972B8F8DF000246E91 /* FingersViewModel.swift in Sources */,
 				E2B699AA2B8F974500246E91 /* SlotAction.swift in Sources */,

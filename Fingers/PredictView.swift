@@ -15,15 +15,17 @@ struct NumberButton {
 struct PredictView: View {
     var buttons: [NumberButton]
     let columns: [GridItem]
+    var playerID: String
     
-    init(buttons: [NumberButton]) {
+    init(playerID: String, buttons: [NumberButton]) {
         self.buttons = buttons
         self.columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
+        self.playerID = playerID
     }
     
     var body: some View {
         VStack {
-            Text("Predict the number of fingers remaining")
+            Text("Player \(self.playerID):\nPredict the number of fingers remaining")
                 .font(.title)
                 .padding()
             Divider()

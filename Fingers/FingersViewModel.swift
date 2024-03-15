@@ -8,10 +8,14 @@
 import SwiftUI
 
 class FingersViewModel: ObservableObject {
+    var nr_humans: Int
+    var nr_bots: Int
     var model: FingersModel
     
-    init() {
-        self.model = FingersModel()
+    init(n_humans: Int, n_bots: Int) {
+        self.nr_humans = n_humans
+        self.nr_bots = n_bots
+        self.model = FingersModel(n_humans: self.nr_humans, n_bots: self.nr_bots)
     }
     
     func getPlayers() -> [Player] {
