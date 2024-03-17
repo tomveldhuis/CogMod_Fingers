@@ -8,9 +8,10 @@
 import SwiftUI
 
 class FingersViewModel: ObservableObject {
+    @Published var model: FingersModel
+    
     var nr_humans: Int
     var nr_bots: Int
-    var model: FingersModel
     
     init(n_humans: Int, n_bots: Int) {
         self.nr_humans = n_humans
@@ -22,12 +23,36 @@ class FingersViewModel: ObservableObject {
         return self.model.game.players
     }
     
-    func nextPlayer() {
-        if (model.game.currPlayerIndex < model.game.maxPlayers - 1) {
-            model.game.currPlayerIndex += 1;
-        } else {
-            model.game.currPlayerIndex = 0;
+    func getPlayerCount() -> Int {
+        return self.model.game.playerCount
+    }
+    
+    func getOutputOnCup() -> Int {
+        return self.model.game.outputOnCup()
+    }
+    
+    func getWinners() -> [Player] {
+        return self.model.game.winners()
+    }
+    
+    func getWinnersString() -> String {
+        let winners = getWinners()
+        var output = ""
+        for idx in 0..<winners.count {
+            output += winners[idx].name
+            if idx != winners.count - 1 {
+                output += ", "
+            }
         }
+        return output
+    }
+    
+    func currentPlayer() -> Player {
+        return self.model.game.currentPlayer()
+    }
+    
+    func nextPlayer() -> Bool {
+        return self.model.game.nextPlayer()
     }
     
     func setPlayerScores(){

@@ -15,10 +15,11 @@ enum gameState {
 }
 
 struct PlayerView: Identifiable {
-    @State var player: Player
-    let position: CGPoint?
     var id: String { player.name }
+    
+    @State var player: Player
     @State var pressed: Bool = false
+    let position: CGPoint?
     
     func getButton(size: CGFloat, gameobj: FingersViewModel, checkCup: Bool) -> some View {
         var color = Color.black
@@ -43,11 +44,11 @@ struct PlayerView: Identifiable {
             if isPressing {
                 pressed = true
                 self.player.isOnCup = true
-                gameobj.model.game.outputOnCup()
+                //gameobj.model.game.outputOnCup()
                 print(self.id)
             } else {
                 self.player.isOnCup = false
-                gameobj.model.game.outputOnCup()
+                //gameobj.model.game.outputOnCup()
                 pressed = false
                 print("Finished")
             }
@@ -61,30 +62,34 @@ struct FingersView: View {
     //----------- Properties ----------
     //---------------------------------
     
-    @ObservedObject var fingersGame: FingersViewModel
+    @StateObject var fingersGame: FingersViewModel
     @State private var state = gameState.Initial
-    @State private var selectedNumberIndex: Int? = nil
-    @State private var counter = 3
+    @State private var currentPlayerName = ""
+    @State private var currentPlayerType = playerType.Human
     @State private var textToUpdate = ""
+    
+    @State private var countDownCounter = 3
     @State private var botPredictionCounter = 2;
-    @State private var resultTimerCounter = 3
+    @State private var resultCounter = 3
     
-    private let MAX_BOT_PREDICTION_TIME = 2; //seconds
-    private let MAX_RESULT_TIME = 3; //seconds
+    private let MAX_COUNTDOWN_TIME = 3 //seconds
+    private let MAX_BOT_PREDICTION_TIME = 2 //seconds
+    private let MAX_RESULT_TIME = 3 //seconds
+    private let circleSize = 50
     
-    let circleSize = 50
-    
-    var predictPlayers = ["1", "3", "4"]
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     
     //---------------------------------
     //---------- Content view ---------
     //---------------------------------
     
     var body: some View {
+        let players = fingersGame.getPlayers()
+        
         GeometryReader { proxy in
             // Parameters
             let size = proxy.size
-            let players = createPlayerViews(players: fingersGame.getPlayers(), bounds: size, circleSize: CGFloat(circleSize))
+            let playerViews = createPlayerViews(players: players, bounds: size, circleSize: CGFloat(circleSize))
 
             // View of the screen
             VStack(content:{
@@ -99,7 +104,7 @@ struct FingersView: View {
                         .frame(width: size.width - 2 * CGFloat(circleSize), height: size.height)
                     
                     // Circle for each player
-                    ForEach(players) { player in
+                    ForEach(playerViews) { player in
                         player.getButton(size: CGFloat(circleSize), gameobj: fingersGame, checkCup: false)
                     }
                     
@@ -108,7 +113,7 @@ struct FingersView: View {
                         case .Countdown:
                             countDownTimerView()
                         case .Result:
-                            ForEach(players) { player in
+                            ForEach(playerViews) { player in
                                 player.getButton(size: CGFloat(circleSize), gameobj: fingersGame, checkCup: true)
                             }
                         
@@ -131,46 +136,26 @@ struct FingersView: View {
                         }
                         .position(x: size.width / 2, y: size.width / 2)
                     case .Predict:
-                        var players = fingersGame.getPlayers()
-                        if players[fingersGame.model.game.currPlayerIndex] is Human {
-                            PredictView(
-                                playerID: "1",
-                                buttons: generateNumberedButtons(numberOfPlayers: fingersGame.getPlayers().count)
+                        ZStack {
+                            generatePredictView(
+                                playerName: currentPlayerName,
+                                playerType: currentPlayerType
                             )
-                            .padding()
-                            .cornerRadius(20)
-                        } else {
-                            let botPredictionTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                            Text("Bot is predicting...")
-                                .font(.system(size: 48))
-                                .onReceive(botPredictionTimer) { time in
-                                    if botPredictionCounter == 0 {
-                                        state = gameState.Countdown
-                                        botPredictionCounter = MAX_BOT_PREDICTION_TIME
-                                        botPredictionTimer.upstream.connect().cancel()
-                                    } else {
-                                        botPredictionCounter -= 1
-                                    }
-                                }
+                        }
+                        .onAppear(
+                            perform: {
+                                currentPlayerName = fingersGame.currentPlayer().name
+                                currentPlayerType = fingersGame.currentPlayer().playerType
+                            }
+                        )
+                        .onReceive(fingersGame.model.game.$currentPlayerIdx) { newIdx in
+                            currentPlayerName = fingersGame.currentPlayer().name
+                            currentPlayerType = fingersGame.currentPlayer().playerType
                         }
                     case .Countdown:
-                        let prediction = selectedNumberIndex!.description
-                        Text("Player predicted \(prediction) fingers remaining")
-                            .position(x: size.width / 2, y: size.width / 2)
+                        Text("")
                     case .Result:
-                        let resultTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-                        Text("Result")
-                            .font(.system(size: 48))
-                            .onReceive(resultTimer) { time in
-                                if resultTimerCounter == 0 {
-                                    fingersGame.nextPlayer()
-                                    state = gameState.Initial
-                                    resultTimerCounter = MAX_RESULT_TIME
-                                    resultTimer.upstream.connect().cancel()
-                                } else {
-                                    resultTimerCounter -= 1
-                                }
-                            }
+                        resultView(playerViews: playerViews)
                 }
             })
         }
@@ -182,7 +167,6 @@ struct FingersView: View {
     
     // Find the coordinates for players in the view
     private func createPlayerViews(players: [Player], bounds: CGSize, circleSize: CGFloat) -> [PlayerView] {
-//        var playersD: [Binding<Player>] = self.fingersGame.model.game.players
         let x = bounds.width / 2
         let y = bounds.height / 2
         var startAngle = Angle.degrees(-90)
@@ -198,49 +182,91 @@ struct FingersView: View {
         return playerViews
     }
     
+    private func generateNumberedButtons() -> [NumberButton] {
+        var buttons: [NumberButton] = []
+        for index in 0..<fingersGame.getPlayerCount()+1 {
+            let button = NumberButton(label: "\(index)", action: {
+                let currentPlayer = fingersGame.currentPlayer()
+                print("Player \(currentPlayer.name) predicts \(index.description)")
+                currentPlayer.makePrediction(prediction: index)
+                
+                if fingersGame.nextPlayer() {
+                    state = gameState.Countdown
+                }
+            })
+            buttons.append(button)
+        }
+        return buttons
+    }
+    
+    //------------ Subviews -------------
+    
+    private func generatePredictView(playerName: String, playerType: playerType) -> some View {
+        if playerType == .Human {
+            return AnyView(PredictView(
+                    game: fingersGame,
+                    buttons: generateNumberedButtons()
+                )
+                .padding()
+                .cornerRadius(20))
+        }
+        return AnyView(botPredictionTimerView())
+    }
+    
     private func countDownTimerView() -> some View {
-        let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
         return Text(textToUpdate)
             .font(.system(size: 48))
             .onReceive(timer) { time in
-                if counter == 0 {
+                if countDownCounter == 0 {
+                    countDownCounter = MAX_COUNTDOWN_TIME
+                    textToUpdate = ""
                     state = gameState.Result
-                    timer.upstream.connect().cancel()
                 } else {
-                    textToUpdate = counter.description
-                    counter -= 1
+                    textToUpdate = countDownCounter.description
+                    countDownCounter -= 1
                 }
             }
     }
     
-    private func generatePredictViews(players: [String]) -> some View {
-        return Text("")
+    private func botPredictionTimerView() -> some View {
+        return Text("Bot \(currentPlayerName) is predicting...")
+            .font(.system(size: 30))
+            .onReceive(timer) { time in
+                if botPredictionCounter == 0 {
+                    botPredictionCounter = MAX_BOT_PREDICTION_TIME
+                    print("Timer finished!")
+                    
+                    if fingersGame.nextPlayer() {
+                        state = gameState.Countdown
+                    }
+                } else {
+                    botPredictionCounter -= 1
+                }
+            }
     }
     
-    // Generate numbered buttons for PredictView
-    private func generateNumberedButtons(numberOfPlayers: Int) -> [NumberButton] {
-        var buttons: [NumberButton] = []
-        for index in 0..<numberOfPlayers+1 {
-            let button = NumberButton(label: "\(index)", action: {
-                print("Player predicted \(index) remaining")
-                selectedNumberIndex = index
-                state = gameState.Countdown
-            })
-            buttons.append(button)
+    private func resultView(playerViews: [PlayerView]) -> some View {
+        return VStack {
+            Text("Total fingers: \(fingersGame.getOutputOnCup().description)\n\nPredictions:")
+            ForEach(playerViews) { player in
+                let playerName = player.player.name
+                if player.player.prediction == nil {
+                    Text("Player \(playerName) has no prediction")
+                } else {
+                    let playerPrediction = player.player.prediction!.description
+                    Text("Player \(playerName) predicted \(playerPrediction)")
+                }
+            }
+            Text("\nWinners: \(fingersGame.getWinnersString())")
         }
-        return buttons
-    }
-    
-    private func generateNumberedButtons2(numberOfPlayers: Int, predictPlayers: [String]) -> [NumberButton] {
-        var buttons: [NumberButton] = []
-        for index in 0..<numberOfPlayers+1 {
-            let button = NumberButton(label: "\(index)", action: {
-                print("Player predicted \(index) remaining")
-                selectedNumberIndex = index
-            })
-            buttons.append(button)
+        .onReceive(timer) { time in
+            if resultCounter == 0 {
+                state = gameState.Initial
+                resultCounter = MAX_RESULT_TIME
+            } else {
+                resultCounter -= 1
+            }
         }
-        return buttons
     }
 }
 

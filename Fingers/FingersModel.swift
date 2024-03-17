@@ -7,6 +7,11 @@
 
 import Foundation
 
+enum playerType {
+    case Human
+    case Bot
+}
+
 class FingersModel {
     var nr_humans: Int
     var nr_bots: Int
@@ -15,7 +20,7 @@ class FingersModel {
     init(n_humans: Int, n_bots: Int){
         self.nr_humans = n_humans
         self.nr_bots = n_bots
-        self.game = Game(n_humans: nr_humans, n_bots: nr_bots)
+        self.game = Game(nr_humans: nr_humans, nr_bots: nr_bots)
     }
     /// The ACT-R model
 //    internal var model = Model()
@@ -27,32 +32,41 @@ class FingersModel {
 //    }
 }
 
-class Game {
-    var players: [Player] = []
-    let maxPlayers: Int
-    var currPlayerIndex: Int = 0
+class Game: ObservableObject {
+    var nr_humans: Int
+    var nr_bots: Int
+    var playerCount: Int
     
-    init(n_humans: Int, n_bots: Int){
-        let n_humans = n_humans
-        let n_bots = n_bots
-        maxPlayers = n_humans + n_bots;
+    var players: [Player]
+    @Published var currentPlayerIdx: Int
+    var currentPlayerType: playerType
+    
+    init(nr_humans: Int, nr_bots: Int){
+        self.nr_humans = nr_humans
+        self.nr_bots = nr_bots
         
-        var j = 0
+        var localPlayers: [Player] = []
+        let localPlayerCount = nr_humans + nr_bots
         
-        for i in 1...n_bots{
-            self.players.append(Bot(name:"B\(i)", number:j))
-            j += 1
+        for i in 0..<localPlayerCount{
+            if i < self.nr_bots {
+                localPlayers.append(Bot(id: i, name: "B\(i+1)"))
+            } else {
+                localPlayers.append(Human(id: i, name: "H\(i+1-nr_bots)"))
+            }
         }
-        for i in 1...n_humans{
-            self.players.append(Human(name:"H\(i)", number:j))
-            j += 1
-        }
+        localPlayers.shuffle()
         
-        self.players.shuffle()
+        let currentPlayerIdx = 0
+        self.playerCount = localPlayerCount
+        self.currentPlayerIdx = currentPlayerIdx
+        self.currentPlayerType = localPlayers[currentPlayerIdx].playerType
+        self.players = localPlayers
         print(self.players)
-    } // end of init
+    }
     
-    func outputOnCup(){
+    // Returns the total number of fingers on the cup
+    func outputOnCup() -> Int {
         var i = 0
         for player in self.players {
             if player.isOnCup == true{
@@ -60,64 +74,123 @@ class Game {
             }
         }
         print("N on cup: \(i)")
+        return i
+    }
+    
+    func winners() -> [Player] {
+        var winners: [Player] = []
+        let output = outputOnCup()
+        for player in self.players {
+            if player.prediction == output {
+                winners.append(player)
+            }
+        }
+        return winners
+    }
+    
+    // Returns current player
+    func currentPlayer() -> Player {
+        return self.players[self.currentPlayerIdx]
+    }
+    
+    // Goes to the next player
+    func nextPlayer() -> Bool {
+        // Returns true if all players have been checked
+        self.currentPlayerIdx += 1
+        if self.currentPlayerIdx == self.playerCount {
+            print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[0].name)")
+            self.currentPlayerIdx = 0
+            return true
+        } else {
+            print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
+        }
+        return false
     }
 }
 
 protocol Player {
+    // Name of player
+    var id: Int { get }
     var name: String { get }
-    var number: Int { get set }
+    var playerType: playerType { get }
+    // Current score of the player
     var score: Int { get set }
-    var isOnCup: Bool { get set }
-    var isPredicting: Bool { get set }
     
+    // Current prediction of the player
+    var prediction: Int? { get set }
+    // Whether the players has the finger on the cup
+    var isOnCup: Bool { get set }
+    //var isPredicting: Bool { get set }
+    
+    func makePrediction(prediction: Int)
 }
 
 class Human: Player {
+    var id: Int
     var name: String
-    var id: String
-    var number: Int
+    var playerType: playerType
     var score: Int
     
+    var prediction: Int?
     var isOnCup: Bool
-    var isPredicting: Bool
+    //var isPredicting: Bool
     
-    init(name: String, number: Int) {
+    init(id: Int, name: String) {
+        self.id = id
         self.name = name
-        self.id = self.name
-        self.number = number
-        self.isOnCup = true
-        self.isPredicting = false
+        self.playerType = .Human
         self.score = 0
+        
+        self.prediction = nil
+        self.isOnCup = true
+        //self.isPredicting = false
     }
     
-    func printStatus(){
-        print("Human \(self.name) is on cup?: \(self.isOnCup)")
+    func makePrediction(prediction: Int) {
+        self.prediction = prediction
     }
+    
+//    func printStatus(){
+//        print("Human \(self.name) is on cup?: \(self.isOnCup)")
+//    }
 }
 
 class Bot: Player {
+    var id: Int
     var name: String
-    var number: Int
+    var playerType: playerType
     var score: Int
     
+    var prediction: Int?
     var isOnCup: Bool
-    var isPredicting: Bool
+    //var isPredicting: Bool
     
     var model: Model
     
-    init(name: String, number: Int) {
+    init(id: Int, name: String) {
+        self.id = id
         self.name = name
-        self.number = number
-        self.isOnCup = true
-        self.isPredicting = false
+        self.playerType = .Bot
         self.score = 0
+        
+        self.prediction = nil
+        self.isOnCup = true
+        //self.isPredicting = false
         
         self.model = Model()
     }
     
+    func makePrediction() {
+        
+    }
+    
+    // Overloaded function
+    func makePrediction(prediction: Int) {
+        makePrediction()
+    }
+    
 //  When a round ends, append it to memory (using some tactic)
     func commitMemory(){}
-
     func pullHistory(){}
     func decidePullOrStay(){}
     func predictFingers(){}

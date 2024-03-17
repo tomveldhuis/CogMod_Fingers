@@ -15,23 +15,27 @@ struct NumberButton {
 struct PredictView: View {
     var buttons: [NumberButton]
     let columns: [GridItem]
-    var playerID: String
+    var game: FingersViewModel
+    @State var playerName: String = ""
     
-    init(playerID: String, buttons: [NumberButton]) {
+    init(game: FingersViewModel, buttons: [NumberButton]) {
         self.buttons = buttons
         self.columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-        self.playerID = playerID
+        self.game = game
     }
     
     var body: some View {
         VStack {
-            
-            
-            
-            Text("Player \(self.playerID):\nPredict the number of fingers remaining")
+            // Text updates when current player changes
+            Text("Player \(self.playerName):\nPredict the number of fingers remaining")
                 .font(.title)
+                .multilineTextAlignment(.center)
                 .padding()
+                .onReceive(self.game.model.game.$currentPlayerIdx) { newIdx in
+                    self.playerName = self.game.currentPlayer().name
+                }
             Divider()
+            // Input buttons
             LazyVGrid(columns: columns, spacing: 16) {
                 ForEach(buttons.indices) {index in
                     Button(action: {
