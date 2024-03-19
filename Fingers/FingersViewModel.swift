@@ -59,6 +59,10 @@ class FingersViewModel: ObservableObject {
         return self.model.game.currentPlayer()
     }
     
+    func resetCurrentPrediction() {
+        currentPlayer().resetPrediction()
+    }
+    
     func nextPlayer() {
         self.model.game.nextPlayer()
     }

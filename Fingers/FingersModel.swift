@@ -131,6 +131,8 @@ protocol Player {
     
     // Make a prediction about how many fingers will stay on the cup
     func makePrediction(prediction: Int)
+    //
+    func resetPrediction()
     // Make a decision about whether to put your finger on the cup
     func makeDecision(decision: Bool)
 }
@@ -164,6 +166,10 @@ class Human: Player {
         self.prediction = prediction
     }
     
+    func resetPrediction() {
+        self.prediction = nil
+    }
+    
     func makeDecision(decision: Bool) {
         self.decision = decision
     }
@@ -195,6 +201,10 @@ class Bot: Player {
     func makePrediction() {
         // TODO: add prediction making from model
         self.prediction = 0 //For now, assume that bots always predict 0
+    }
+    
+    func resetPrediction() {
+        self.prediction = nil
     }
     
     func makeDecision() {

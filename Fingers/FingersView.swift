@@ -22,9 +22,11 @@ struct PlayerView: Identifiable {
     
     func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, checkCup: Bool) -> some View {
         var color = Color.black
+        var text = id
         
         if checkCup {
             color = (player.decision!) ? Color.green : Color.red
+            text = player.score.description
         }
         
         var strokeColor = color
@@ -36,7 +38,7 @@ struct PlayerView: Identifiable {
             Circle()
                 .strokeBorder(strokeColor, lineWidth: 5)
                 .background(Circle().fill(color))
-            Text(id)
+            Text(text)
                 .foregroundColor(.white)
         }
         .frame(width: size, height: size)
@@ -286,10 +288,15 @@ struct FingersView: View {
                 .font(.system(size: 20))
             Text(fingersGame.currentPlayer().prediction!.description)
                 .font(.system(size: 30))
+            Text("Player \(self.fingersGame.currentPlayer().name)'s new score is:")
+                .font(.system(size: 20))
+            Text(fingersGame.currentPlayer().score.description)
+                .font(.system(size: 30))
         }
         .onReceive(timer) { time in
             if resultCounter == 0 {
                 state = gameState.Initial
+                fingersGame.resetCurrentPrediction()
                 fingersGame.nextPlayer()
                 resultCounter = MAX_RESULT_TIME
             } else {
