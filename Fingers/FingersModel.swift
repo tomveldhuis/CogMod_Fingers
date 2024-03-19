@@ -125,16 +125,9 @@ protocol Player {
     
     // Current prediction of the player
     var prediction: Int? { get set }
-<<<<<<< Updated upstream
-    // Whether the players has the finger on the cup
-    
-    var isOnCup: Bool { get set }
-    //var isPredicting: Bool { get set }
-=======
     // Current decision of the player
     // -> finger on cup / finger not on cup
     var decision: Bool? { get set }
->>>>>>> Stashed changes
     
     // Make a prediction about how many fingers will stay on the cup
     func makePrediction(prediction: Int)
