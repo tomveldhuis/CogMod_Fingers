@@ -155,7 +155,7 @@ class Human: Player {
         self.score = 0
         
         self.prediction = nil
-        self.decision = nil
+        self.decision = false
         
         self.isOnCup = false
     }
