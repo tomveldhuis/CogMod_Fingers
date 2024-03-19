@@ -77,7 +77,7 @@ class Game: ObservableObject {
         return i
     }
     
-    func winners() -> [Player] {
+    func determineWinners() -> [Player] {
         var winners: [Player] = []
         let output = outputOnCup()
         for player in self.players {
@@ -86,6 +86,15 @@ class Game: ObservableObject {
             }
         }
         return winners
+    }
+    
+    func updateScores() -> Void {
+        for player in self.determineWinners() {
+            var player = player
+            print("Player \(player.name) had \(player.score)")
+            player.score += 1
+            print("and now \(player.name) has \(player.score)")
+        }
     }
     
     // Returns current player
@@ -119,6 +128,7 @@ protocol Player {
     // Current prediction of the player
     var prediction: Int? { get set }
     // Whether the players has the finger on the cup
+    
     var isOnCup: Bool { get set }
     //var isPredicting: Bool { get set }
     

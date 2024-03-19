@@ -32,7 +32,7 @@ class FingersViewModel: ObservableObject {
     }
     
     func getWinners() -> [Player] {
-        return self.model.game.winners()
+        return self.model.game.determineWinners()
     }
     
     func getWinnersString() -> String {
@@ -55,7 +55,17 @@ class FingersViewModel: ObservableObject {
         return self.model.game.nextPlayer()
     }
     
-    func setPlayerScores(){
-        
+    func updateScores() -> Void {
+        self.model.game.updateScores()
+    }
+    
+    func checkIfGameIsOver() -> Bool {
+        var isGameOver = false
+        for player in self.getPlayers() {
+            if player.score == 10 {
+                isGameOver = true
+            }
+        }
+        return isGameOver
     }
 }

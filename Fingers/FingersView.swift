@@ -246,6 +246,15 @@ struct FingersView: View {
     }
     
     private func resultView(playerViews: [PlayerView]) -> some View {
+        // Update scores after the round has ended
+        self.fingersGame.updateScores()
+        
+        // Check if the game is done by checking for the max score
+        if self.fingersGame.checkIfGameIsOver() == true {
+            print("Game over!")
+            // TODO: return game-over view!
+        }
+        
         return VStack {
             Text("Total fingers: \(fingersGame.getOutputOnCup().description)\n\nPredictions:")
             ForEach(playerViews) { player in
