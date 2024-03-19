@@ -175,7 +175,7 @@ class Bot: Player {
     var isOnCup: Bool
     //var isPredicting: Bool
     
-    var model: Model
+    var model: BotModel
     
     init(id: Int, name: String) {
         self.id = id
@@ -187,7 +187,7 @@ class Bot: Player {
         self.isOnCup = true
         //self.isPredicting = false
         
-        self.model = Model()
+        self.model = BotModel()
     }
     
     func makePrediction() {
