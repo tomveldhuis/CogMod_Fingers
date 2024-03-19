@@ -69,7 +69,7 @@ class Game: ObservableObject {
     func outputOnCup() -> Int {
         var i = 0
         for player in self.players {
-            if player.isOnCup == true{
+            if player.decision == true{
                 i += 1
             }
         }
@@ -103,17 +103,15 @@ class Game: ObservableObject {
     }
     
     // Goes to the next player
-    func nextPlayer() -> Bool {
+    func nextPlayer() {
         // Returns true if all players have been checked
         self.currentPlayerIdx += 1
         if self.currentPlayerIdx == self.playerCount {
             print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[0].name)")
             self.currentPlayerIdx = 0
-            return true
         } else {
             print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
         }
-        return false
     }
 }
 
@@ -127,12 +125,21 @@ protocol Player {
     
     // Current prediction of the player
     var prediction: Int? { get set }
+<<<<<<< Updated upstream
     // Whether the players has the finger on the cup
     
     var isOnCup: Bool { get set }
     //var isPredicting: Bool { get set }
+=======
+    // Current decision of the player
+    // -> finger on cup / finger not on cup
+    var decision: Bool? { get set }
+>>>>>>> Stashed changes
     
+    // Make a prediction about how many fingers will stay on the cup
     func makePrediction(prediction: Int)
+    // Make a decision about whether to put your finger on the cup
+    func makeDecision(decision: Bool)
 }
 
 class Human: Player {
@@ -142,8 +149,11 @@ class Human: Player {
     var score: Int
     
     var prediction: Int?
+    var decision: Bool?
+    
+    // Whether the human player has currently
+    // their finger on the cup
     var isOnCup: Bool
-    //var isPredicting: Bool
     
     init(id: Int, name: String) {
         self.id = id
@@ -152,17 +162,18 @@ class Human: Player {
         self.score = 0
         
         self.prediction = nil
-        self.isOnCup = true
-        //self.isPredicting = false
+        self.decision = nil
+        
+        self.isOnCup = false
     }
     
     func makePrediction(prediction: Int) {
         self.prediction = prediction
     }
     
-//    func printStatus(){
-//        print("Human \(self.name) is on cup?: \(self.isOnCup)")
-//    }
+    func makeDecision(decision: Bool) {
+        self.decision = decision
+    }
 }
 
 class Bot: Player {
@@ -172,8 +183,7 @@ class Bot: Player {
     var score: Int
     
     var prediction: Int?
-    var isOnCup: Bool
-    //var isPredicting: Bool
+    var decision: Bool?
     
     var model: BotModel
     
@@ -184,20 +194,30 @@ class Bot: Player {
         self.score = 0
         
         self.prediction = nil
-        self.isOnCup = true
-        //self.isPredicting = false
+        self.decision = nil
         
         self.model = BotModel()
     }
     
     func makePrediction() {
-        
+        // TODO: add prediction making from model
+        self.prediction = 0 //For now, assume that bots always predict 0
     }
     
-    // Overloaded function
+    func makeDecision() {
+        // TODO: add decision making from model
+        self.decision = true //For now, assume that bots always stay
+    }
+    
+    // Overloaded functions for bot predictions/decisions
+    func makeDecision(decision: Bool) {
+        makeDecision()
+    }
     func makePrediction(prediction: Int) {
         makePrediction()
     }
+    
+    
     
 //  When a round ends, append it to memory (using some tactic)
     func commitMemory(){}

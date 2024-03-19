@@ -22,6 +22,7 @@ struct PredictView: View {
         self.buttons = buttons
         self.columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
         self.game = game
+        self.game.makeBotDecisions()
     }
     
     var body: some View {

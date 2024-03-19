@@ -47,12 +47,20 @@ class FingersViewModel: ObservableObject {
         return output
     }
     
+    func makeBotDecisions() {
+        for player in getPlayers() {
+            if player.playerType == .Bot {
+                player.makeDecision(decision: false)
+            }
+        }
+    }
+    
     func currentPlayer() -> Player {
         return self.model.game.currentPlayer()
     }
     
-    func nextPlayer() -> Bool {
-        return self.model.game.nextPlayer()
+    func nextPlayer() {
+        self.model.game.nextPlayer()
     }
     
     func updateScores() -> Void {
