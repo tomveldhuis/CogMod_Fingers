@@ -1,0 +1,57 @@
+(chunk-type lastAction decision prediction result)
+(chunk-type action decision prediction)
+
+(add-dm
+   (fact-1 isa lastAction decision stay prediction 2 result 3 win no)
+   (goal isa goal state start retrieving deciding)
+)
+
+(set-all-baselevels -100 10) ;; time offset and number of references
+
+(p retrieve-last-action
+   =goal>
+     isa goal
+     state start
+==>
+   =goal>
+     state retrieving
+   +retrieval>
+     isa action
+)
+
+(p retrieve-last-action-failure
+   =goal>
+     isa goal
+     state retrieving
+   ?retrieval>
+     state error
+==>
+   =goal>
+     state deciding
+)
+
+(p retrieve-last-action-success
+   =goal>
+     isa goal
+     state retrieving
+   =retrieval>
+     isa action
+     decision =_decision
+==>
+   =goal>
+     isa goal
+     state deciding
+   +retrieval>
+     isa decision
+     decision =_decision
+)
+
+(p stay-finger
+   =goal>
+     isa goal
+     state deciding
+==>
+   
+)
+
+(goal-focus goal)
