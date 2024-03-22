@@ -26,6 +26,8 @@ struct BotModel : BotModelProtocol {
             let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
             chunk.setSlot(slot: "isa", value: "goal")
             chunk.setSlot(slot: "state", value: "start")
+            chunk.setSlot(slot: "isActive", value: "false")
+            chunk.setSlot(slot: "numPlayers", value: 10)
             model.buffers["goal"] = chunk
         }
         let goal = model.buffers["goal"]!
@@ -34,9 +36,25 @@ struct BotModel : BotModelProtocol {
             // Switch between states in the goal buffer
             switch (goal.slotvals["state"]!.description) {
             case "start":
-                model.time += 0.05
+                //model.time += 0.05
+                model.addToTrace(string: "Starting round")
             case "retrieving-decision":
-                model.time += 0.05
+                if let imaginal = model.buffers["imaginal"] {
+                    let retrieval = Chunk(s: "retrieval", m: model)
+                    retrieval.setSlot(slot: "isa", value: "lastDecision")
+                    retrieval.setSlot(slot: "decision", value: imaginal.slotvals["decision"]!)
+                    let (latency, result) = model.dm.retrieve(chunk: retrieval)
+                    model.time += 0.05 + latency
+                    if let retrievedChunk = result {
+                        
+                        model.addToTrace(string: "Retrieving \(retrievedChunk)")
+                    } else {
+                        // fail to retrieve
+                        // random
+                    }
+                }
+                
+                
             case "retrieving-prediction":
                 model.time += 0.05
             case "deciding":
@@ -45,7 +63,7 @@ struct BotModel : BotModelProtocol {
                 model.time += 0.05
             case "update-decisions":
                 model.time += 0.05
-            case "update-predicting":
+            case "update-predictions":
                 model.time += 0.05
             case "playing":
                 model.time += 0.05
