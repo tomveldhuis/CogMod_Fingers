@@ -7,12 +7,14 @@ protocol BotModelProtocol {
     var dmContent: [PublicChunk] { get set }
     var waitingForAction: Bool { get set }
     var feedback: String { get set }
-    func loadModel(filename: String)
+    var decision: Bool? { get set}
+    var prediction: Int? { get set }
     mutating func run()
     mutating func reset()
     func modifyLastAction(slot: String, value: String) -> Bool
     mutating func choose(playerAction: String)
     mutating func update()
+    func retrieveAction() -> (prediction: Int?, decision: Bool)
 }
 
 extension BotModelProtocol {
@@ -35,5 +37,11 @@ extension BotModelProtocol {
         }
         dmContent.sort { $0.activation > $1.activation }
         waitingForAction = true
+    }
+    
+    func retrieveAction() -> (prediction: Int?, decision: Bool) {
+        //
+        
+        return (nil, true)
     }
 }

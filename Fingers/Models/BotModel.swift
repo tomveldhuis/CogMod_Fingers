@@ -12,24 +12,60 @@ struct BotModel : BotModelProtocol {
     var waitingForAction = false
     /// String that is displayed to show the outcome of a round
     var feedback = ""
+    /// Boolean that determines whether to stay or pull finger from the cup
+    var decision: Bool? = nil
+    /// Int that holds the models prediction on how many fingers are left on the cup
+    var prediction: Int? = nil
     /// The ACT-R model
     internal var model = Model()
     
-    /// Function that loads in a text file that is interpreted as the model
-    /// - Parameter filename: filename to be loaded (extension .actr is added by the function)
-    func loadModel(filename: String) {
-        model.loadModel(fileName: filename)
-    }
-    
     /// Run the model until done, or until it reaches a +action>
     mutating func run() {
+        // Init goal buffer
+        if model.buffers["goal"] == nil {
+            let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
+            chunk.setSlot(slot: "isa", value: "goal")
+            chunk.setSlot(slot: "state", value: "start")
+            model.buffers["goal"] = chunk
+        }
+        let goal = model.buffers["goal"]!
+        var done = false
+        while !done {
+            // Switch between states in the goal buffer
+            switch (goal.slotvals["state"]!.description) {
+            case "start":
+                model.time += 0.05
+            case "retrieving-decision":
+                model.time += 0.05
+            case "retrieving-prediction":
+                model.time += 0.05
+            case "deciding":
+                model.time += 0.05
+            case "predicting":
+                model.time += 0.05
+            case "update-decisions":
+                model.time += 0.05
+            case "update-predicting":
+                model.time += 0.05
+            case "playing":
+                model.time += 0.05
+            case "waiting":
+                model.time += 0.05
+            default: done = true
+            }
+        update()
+        }
+        
         model.run()
     }
     
     /// Reset the model
     mutating func reset() {
         model.reset()
+        decision = nil
+        prediction = nil
         feedback = ""
+        run()
     }
     
     /// Modify a slot in the action buffer
