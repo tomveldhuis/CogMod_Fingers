@@ -35,22 +35,6 @@ class FingersViewModel: ObservableObject {
         return self.model.game.outputOnCup()
     }
     
-    func getWinners() -> [Player] {
-        return self.model.game.determineWinners()
-    }
-    
-    func getWinnersString() -> String {
-        let winners = getWinners()
-        var output = ""
-        for idx in 0..<winners.count {
-            output += winners[idx].name
-            if idx != winners.count - 1 {
-                output += ", "
-            }
-        }
-        return output
-    }
-    
     func runBotModels() {
         for player in getBotPlayers() {
             if player.id == currentPlayer().id {

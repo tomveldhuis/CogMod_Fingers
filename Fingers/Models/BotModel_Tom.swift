@@ -136,10 +136,11 @@ struct BotModel_Tom : BotModelProtocol {
                 case "predicting":
                     addToTrace(string: "Retrieving prediction from memory...")
                 
-                    // Use blended retrieval for prediction value
+                    // Use partial blended retrieval for prediction value
                     let pattern = Chunk(s: "retrieval", m: model)
                     pattern.setSlot(slot: "isa", value: "lastPrediction")
-                    let (latency, result) = model.dm.blendedRetrieve(chunk: pattern)
+                    pattern.setSlot(slot: "win", value: "yes")
+                    let (latency, result) = model.dm.blendedPartialRetrieve(chunk: pattern, mismatchFunction: mismatchFunction(_:_:))
                     model.time += 0.05 + latency
                     
                     let imaginal = model.buffers["imaginal"]!
@@ -186,7 +187,7 @@ struct BotModel_Tom : BotModelProtocol {
                         if i <= outputOnCup {
                             newDecision.setSlot(slot: "decision", value: "stay")
                         } else {
-                            newDecision.setSlot(slot: "decision", value: "stay")
+                            newDecision.setSlot(slot: "decision", value: "pull")
                         }
                         model.dm.addToDM(newDecision)
                     }
@@ -254,5 +255,24 @@ struct BotModel_Tom : BotModelProtocol {
     mutating func choose(playerAction: String) {
         model.run()
         update()
+    }
+    
+    func mismatchFunction(_ x: Value, _ y: Value) -> Double? {
+        var mismatch: Double? = nil
+        // No mismatch penalty if slotvalue of "win" is equal to "yes" for both values
+        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("yes")) {
+            mismatch = 0.0
+        }
+        // If not, mismatch penalty is -1.0
+        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("no")) {
+            mismatch = -1.0
+        }
+        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("yes")) {
+            mismatch = -1.0
+        }
+        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("no")) {
+            mismatch = -1.0
+        }
+        return mismatch
     }
 }
