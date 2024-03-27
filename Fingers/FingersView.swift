@@ -104,20 +104,24 @@ struct FingersView: View {
                 //--- View of the upper screen ---
                 //--------------------------------
                 
-                // Reset game button
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        self.showResetGameAlert = true
-                    }) {
-                        Image(systemName: "arrow.counterclockwise")
-                            .foregroundColor(.blue)
-                            .imageScale(.large)
-                    }
-                }
-                .padding()
-                
                 ZStack(content: {
+                    // Reset game button
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                self.showResetGameAlert = true
+                            }) {
+                                Image(systemName: "arrow.counterclockwise")
+                                    .foregroundColor(.blue)
+                                    .imageScale(.large)
+                            }
+                            .padding()
+                        }
+                        Spacer()
+                            .frame(height: size.height / 2 - 25)
+                    }
+                    
                     // Big red circle
                     Circle()
                         .stroke(.blue, lineWidth: 5)
