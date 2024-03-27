@@ -15,6 +15,7 @@ protocol BotModelProtocol {
     mutating func choose(playerAction: String)
     mutating func update()
     func retrieveAction() -> (prediction: Int?, decision: Bool)
+    func createGoalBuffer(model: Model, isActive: Bool) -> Chunk
 }
 
 extension BotModelProtocol {
@@ -43,5 +44,31 @@ extension BotModelProtocol {
         //
         
         return (nil, true)
+    }
+    
+    func createGoalBuffer(model: Model, isActive: Bool) -> Chunk {
+        if model.buffers["goal"] == nil {
+            // Set initial goal buffer
+            let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
+            chunk.setSlot(slot: "isa", value: "goal")
+            chunk.setSlot(slot: "state", value: "start")
+            if isActive {
+                chunk.setSlot(slot: "isActive", value: "yes")
+            } else {
+                chunk.setSlot(slot: "isActive", value: "no")
+            }
+            model.buffers["goal"] = chunk
+        } else {
+            // Ensure that the goal buffer contains
+            // information about the current player
+            let goal = model.buffers["goal"]!
+            if isActive {
+                goal.setSlot(slot: "isActive", value: "yes")
+            } else {
+                goal.setSlot(slot: "isActive", value: "no")
+            }
+        }
+        
+        return model.buffers["goal"]!
     }
 }
