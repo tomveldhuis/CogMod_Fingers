@@ -93,6 +93,12 @@ class Model: Codable {
         }
     }
     
+    func modifyLastAction(slot:String, value: Double) {
+        if let action = buffers["action"] {
+            action.setSlot(slot: slot, value: value)
+        }
+    }
+    
     /**
     Is there a chunk in the action buffer?
     - returns: Whether there is one
