@@ -222,15 +222,6 @@ struct BotModel_Tom : BotModelProtocol {
         model.modifyLastAction(slot: "currentPrediction", value: Double(currentPrediction))
     }
     
-    /// Reset the model
-    mutating func reset() {
-        model.reset()
-        decision = nil
-        prediction = nil
-        feedback = ""
-        //run()
-    }
-    
     /// Modify a slot in the action buffer
     /// - Parameters:
     ///   - slot: the slot to be modified
@@ -247,12 +238,5 @@ struct BotModel_Tom : BotModelProtocol {
 
     func addToTrace(string: String) {
         model.addToTrace(string: name + "  " + string)
-    }
-    
-    /// Function that is executed whenever the bot makes a choice.
-    /// - Parameter fingerAction: "stay" or "pull"
-    mutating func choose(playerAction: String) {
-        model.run()
-        update()
     }
 }

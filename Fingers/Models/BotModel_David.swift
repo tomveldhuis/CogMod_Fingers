@@ -2,8 +2,14 @@ import Foundation
 
 // Struct to use mutating functions
 struct BotModel_David : BotModelProtocol {
+    /// Player name
+    var name: String
+    /// Total amount of players in the current game
+    var playerCount: Int
     /// The trace from the model
     var traceText: String = ""
+    /// Time between two rounds
+    var breakTime: Double = 5
     /// The model code
     var modelText: String = ""
     /// Part of the contents of DM that can needs to be displayed in the interface
@@ -12,23 +18,39 @@ struct BotModel_David : BotModelProtocol {
     var waitingForAction = false
     /// String that is displayed to show the outcome of a round
     var feedback = ""
-    /// Boolean that determines whether to stay or pull finger from the cup
-    var decision: Bool? = nil
-    /// Int that holds the models prediction on how many fingers are left on the cup
-    var prediction: Int? = nil
     /// The ACT-R model
     internal var model = Model()
     
     /// Run the model until done, or until it reaches a +action>
     mutating func run(isActive: Bool) {
         // Init goal buffer
-        let goal = createGoalBuffer(model: model, isActive: isActive)
+        if model.buffers["goal"] == nil {
+            let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
+            chunk.setSlot(slot: "isa", value: "goal")
+            chunk.setSlot(slot: "state", value: "start")
+            chunk.setSlot(slot: "numPlayers", value: Double(playerCount))
+            if isActive {
+                chunk.setSlot(slot: "isActive", value: "yes")
+            } else {
+                chunk.setSlot(slot: "isActive", value: "no")
+            }
+            model.buffers["goal"] = chunk
+        } else {
+            // Goal buffer should contain most recent information about round
+            let goal = model.buffers["goal"]!
+            if isActive {
+                goal.setSlot(slot: "isActive", value: "yes")
+            } else {
+                goal.setSlot(slot: "isActive", value: "no")
+            }
+        }
+        let goal = model.buffers["goal"]!
         var done = false
         while !done {
             // Switch between states in the goal buffer
             switch (goal.slotvals["state"]!.description) {
             case "start":
-                // Always start with random decision (and initial imaginal buffer)
+                // Always start with random decision (and to initialize imaginal buffer)
                 let imaginal = Chunk(s: model.generateName(string: "imaginal"), m: model)
                 if actrNoise(noise: 1.0) > 0 {
                     imaginal.setSlot(slot: "decision", value: "stay")
@@ -38,7 +60,14 @@ struct BotModel_David : BotModelProtocol {
                     model.addToTrace(string: "Start with random decision: pull")
                 }
                 model.buffers["imaginal"] = imaginal
-                model.time += 0.05
+                model.time += 0.05 + model.imaginalActionTime
+                
+                // If active player, retrieve predictions else skip and retrieve decisions instead
+                if goal.slotvals["isActive"]!.description == "yes" {
+                    goal.setSlot(slot: "state", value: "retrieving-prediction")
+                } else {
+                    goal.setSlot(slot: "state", value: "retrieving-decision")
+                }
             case "retrieving-decision":
                 model.addToTrace(string: "Retrieving decision from memory...")
                 if let imaginal = model.buffers["imaginal"] {
@@ -62,28 +91,33 @@ struct BotModel_David : BotModelProtocol {
                         }
                         model.time += 0.05
                     }
+                    
+                    goal.setSlot(slot: "state", value: "deciding")
                 }
             case "retrieving-prediction":
-                model.addToTrace(string: "Retrieving decision from memory...")
+                model.addToTrace(string: "Retrieving prediction from memory...")
                 if let imaginal = model.buffers["imaginal"] {
-                    // If active player, retrieve prediction value
-                    if goal.slotvals["isActive"]!.description == "yes" {
-                        goal.setSlot(slot: "state", value: "predicting")
+                    let retrieval = Chunk(s: "retrieval", m: model)
+                    retrieval.setSlot(slot: "isa", value: "lastPrediction")
+                    let (latency, result) = model.dm.retrieve(chunk: retrieval)
+                    model.time += 0.05 + latency
+                    if let retrievedChunk = result {
+                        // Succesfull retrieval
+                        imaginal.setSlot(slot: "prediction", value: retrievedChunk.slotvals["prediction"]!)
+                        model.addToTrace(string: "Retrieved \(retrievedChunk), prediction: \(retrievedChunk.slotvals["prediction"]!)")
                     } else {
-                        // Else create an action chunk and wait for game to finish round
-                        let action = Chunk(s: "action", m: model)
-                        action.setSlot(slot: "isa", value: "decision")
-                        action.setSlot(slot: "decision", value: imaginal.slotvals["decision"]!)
-                        model.buffers["action"] = action
+                        // Failed retrieval
+                        model.addToTrace(string: "No prediction chunk found")
+                        let numPlayers = Int(goal.slotvals["numPlayers"]!.number()!)
+                        let randomPrediction = Double(Int.random(in: 0...numPlayers))
+                        imaginal.setSlot(slot: "prediction", value: randomPrediction)
+                        addToTrace(string: "Random prediction is made instead: \(randomPrediction.description)")
                         model.time += 0.05
-                        model.addToTrace(string: "Created an action chunk")
-                        
-                        goal.setSlot(slot: "state", value: "waiting")
-                        done = true
-                        model.waitingForAction = true
-                        model.addToTrace(string: "Waiting for the round to finish...")
                     }
+                    
+                    goal.setSlot(slot: "state", value: "predicting")
                 }
+                
             case "deciding":
                 model.addToTrace(string: "Retrieving decision from memory...")
             
@@ -150,24 +184,18 @@ struct BotModel_David : BotModelProtocol {
                 model.time += 0.05
             case "update-predictions":
                 model.time += 0.05
-            case "playing":
-                model.time += 0.05
             case "waiting":
-                model.time += 0.05
+                // Return to the "deciding" state and wait for the next round
+                goal.setSlot(slot: "state", value: "deciding")
+                done = true
+                addToTrace(string: "Waiting for the next round...")
+                model.time += breakTime
             default: done = true
             }
         update()
         }
         
         model.run()
-    }
-    
-    /// Reset the model
-    mutating func reset() {
-        model.reset()
-        decision = nil
-        prediction = nil
-        feedback = ""
     }
     
     /// Modify a slot in the action buffer
@@ -183,11 +211,8 @@ struct BotModel_David : BotModelProtocol {
             return false
         }
     }
-
-    /// Function that is executed whenever the bot makes a choice.
-    /// - Parameter fingerAction: "stay" or "pull"
-    mutating func choose(playerAction: String) {
-        model.run()
-        update()
+    
+    func addToTrace(string: String) {
+        model.addToTrace(string: name + "  " + string)
     }
 }

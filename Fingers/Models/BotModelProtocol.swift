@@ -1,21 +1,18 @@
 import Foundation
 
 protocol BotModelProtocol {
+    var name: String { get set }
+    var playerCount: Int { get set }
     var traceText: String { get set }
+    var breakTime: Double { get set }
     var model: Model {get set }
     var modelText: String { get set }
     var dmContent: [PublicChunk] { get set }
     var waitingForAction: Bool { get set }
     var feedback: String { get set }
-    var decision: Bool? { get set}
-    var prediction: Int? { get set }
     mutating func run(isActive: Bool)
-    mutating func reset()
     func modifyLastAction(slot: String, value: String) -> Bool
-    mutating func choose(playerAction: String)
     mutating func update()
-    func retrieveAction() -> (prediction: Int?, decision: Bool)
-    func createGoalBuffer(model: Model, isActive: Bool) -> Chunk
 }
 
 extension BotModelProtocol {
@@ -38,37 +35,5 @@ extension BotModelProtocol {
         }
         dmContent.sort { $0.activation > $1.activation }
         waitingForAction = true
-    }
-    
-    func retrieveAction() -> (prediction: Int?, decision: Bool) {
-        //
-        
-        return (nil, true)
-    }
-    
-    func createGoalBuffer(model: Model, isActive: Bool) -> Chunk {
-        if model.buffers["goal"] == nil {
-            // Set initial goal buffer
-            let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
-            chunk.setSlot(slot: "isa", value: "goal")
-            chunk.setSlot(slot: "state", value: "start")
-            if isActive {
-                chunk.setSlot(slot: "isActive", value: "yes")
-            } else {
-                chunk.setSlot(slot: "isActive", value: "no")
-            }
-            model.buffers["goal"] = chunk
-        } else {
-            // Ensure that the goal buffer contains
-            // information about the current player
-            let goal = model.buffers["goal"]!
-            if isActive {
-                goal.setSlot(slot: "isActive", value: "yes")
-            } else {
-                goal.setSlot(slot: "isActive", value: "no")
-            }
-        }
-        
-        return model.buffers["goal"]!
     }
 }
