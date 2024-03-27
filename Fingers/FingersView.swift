@@ -230,7 +230,9 @@ struct FingersView: View {
                 let currentPlayer = fingersGame.currentPlayer()
                 print("Player \(currentPlayer.name) predicts \(index.description)")
                 
+                // Make prediction for current human player
                 currentPlayer.makePrediction(prediction: index)
+                // Make decisions for bot players
                 fingersGame.runBotModels()
                 
                 state = gameState.Countdown
@@ -300,6 +302,9 @@ struct FingersView: View {
     private func resultView(playerViews: [PlayerView]) -> some View {
         // Update scores after the round has ended
         self.fingersGame.updateScores()
+        
+        // Update bot models with knowledge about results from current round
+        self.fingersGame.updateBotModels()
         
         // Check if the game is done by checking for the max score
         if self.fingersGame.checkIfGameIsOver() == true {

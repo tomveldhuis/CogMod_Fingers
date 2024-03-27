@@ -61,6 +61,24 @@ class FingersViewModel: ObservableObject {
         }
     }
     
+    func updateBotModels() {
+        for player in getBotPlayers() {
+            if player.id == currentPlayer().id {
+                player.updateModel(
+                    isActive: true,
+                    outputOnCup: getOutputOnCup(),
+                    currentPrediction: currentPlayer().prediction!
+                )
+            } else {
+                player.updateModel(
+                    isActive: false,
+                    outputOnCup: getOutputOnCup(),
+                    currentPrediction: currentPlayer().prediction!
+                )
+            }
+        }
+    }
+    
     func currentPlayer() -> Player {
         return self.model.game.currentPlayer()
     }

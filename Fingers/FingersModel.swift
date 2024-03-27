@@ -147,6 +147,7 @@ protocol Player {
     func makeDecision(decision: Bool)
     
     func runModel(isActive: Bool)
+    func updateModel(isActive: Bool, outputOnCup: Int, currentPrediction: Int)
 }
 
 class Human: Player {
@@ -189,6 +190,10 @@ class Human: Player {
     func runModel(isActive: Bool) {
         
     }
+    
+    func updateModel(isActive: Bool, outputOnCup: Int, currentPrediction: Int) {
+        
+    }
 }
 
 class Bot: Player {
@@ -211,7 +216,7 @@ class Bot: Player {
         self.prediction = nil
         self.decision = nil
         
-        self.model = BotModel_Tom(playerCount: playerCount)
+        self.model = BotModel_Tom(name: name, playerCount: playerCount)
     }
     
     func resetPrediction() {
@@ -247,6 +252,13 @@ class Bot: Player {
                 }
             }
         }
+    }
+    
+    func updateModel(isActive: Bool, outputOnCup: Int, currentPrediction: Int) {
+        if self.model.model.actionChunk() {
+            model.updateActionChunk(outputOnCup: outputOnCup, currentPrediction: currentPrediction)
+        }
+        self.model.run(isActive: isActive)
     }
 //
 //
