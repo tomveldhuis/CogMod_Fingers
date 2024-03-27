@@ -28,6 +28,7 @@ struct BotModel_Tom : BotModelProtocol {
             let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
             chunk.setSlot(slot: "isa", value: "goal")
             chunk.setSlot(slot: "state", value: "start")
+            chunk.setSlot(slot: "numPlayers", value: Double(playerCount))
             if isActive {
                 chunk.setSlot(slot: "isActive", value: "yes")
             } else {
@@ -145,7 +146,8 @@ struct BotModel_Tom : BotModelProtocol {
                     } else {
                         // Retrieval failure: make a random prediction (value between 0 and playerCount)
                         model.addToTrace(string: "No prediction chunk found")
-                        let randomPrediction = Double(Int.random(in: 0...playerCount))
+                        let numPlayers = goal.slotvals["numPlayers"]!.number()!
+                        let randomPrediction = Double(Int.random(in: 0...Int(numPlayers)))
                         imaginal.setSlot(slot: "prediction", value: randomPrediction)
                         model.addToTrace(string: "Random prediction is made instead: \(randomPrediction.description)")
                         model.time += 0.05
@@ -161,15 +163,23 @@ struct BotModel_Tom : BotModelProtocol {
                     model.time += 0.05
                     model.addToTrace(string: "Created an action chunk")
                 
-                    goal.setSlot(slot: "", value: "waiting")
+                    goal.setSlot(slot: "state", value: "waiting")
                     done = true
                     model.waitingForAction = true
                     model.addToTrace(string: "Waiting for the round to finish...")
                 case "waiting":
-                    model.time += 0.05
+                    // Update DM with new knowledge from the current round
+                    model.addToTrace(string: "Updating DM with new knowledge...")
+                
+                    // Remove current decision/prediction from the imaginal buffer
+                    let imaginal = model.buffers["imaginal"]!
+                    imaginal.setSlot(slot: "decision", value: .Empty)
+                    imaginal.setSlot(slot: "prediction", value: .Empty)
+                
+                    // Return to the "deciding" state and wait for the next round
                 default: done = true
             }
-        update()
+            update()
         }
     }
     

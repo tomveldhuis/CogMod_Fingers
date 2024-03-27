@@ -147,6 +147,7 @@ protocol Player {
     func makeDecision(decision: Bool)
     
     func runModel(isActive: Bool)
+    func updateModel(isActive: Bool)
 }
 
 class Human: Player {
@@ -187,6 +188,10 @@ class Human: Player {
     }
     
     func runModel(isActive: Bool) {
+        
+    }
+    
+    func updateModel(isActive: Bool) {
         
     }
 }
@@ -247,6 +252,10 @@ class Bot: Player {
                 }
             }
         }
+    }
+    
+    func updateModel(isActive: Bool) {
+        
     }
 //
 //
