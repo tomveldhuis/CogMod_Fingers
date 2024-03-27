@@ -21,7 +21,7 @@ struct FingersApp: App {
             }
             else {
                 let game = FingersViewModel(n_humans: nr_humans, n_bots: nr_bots)
-                FingersView(fingersGame: game)
+                FingersView(fingersGame: game, resetGame: $showLandingView)
                     .transition(.slide)
             }
         }

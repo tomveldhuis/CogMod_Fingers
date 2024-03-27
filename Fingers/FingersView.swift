@@ -66,6 +66,8 @@ struct FingersView: View {
     //---------------------------------
     
     @StateObject var fingersGame: FingersViewModel
+    @Binding var resetGame: Bool
+    
     @State private var state = gameState.Initial
     @State private var currentPlayerName = ""
     @State private var currentPlayerType = playerType.Human
@@ -74,6 +76,8 @@ struct FingersView: View {
     @State private var countDownCounter = 3
     @State private var botPredictionCounter = 2;
     @State private var resultCounter = 5
+    
+    @State private var showResetGameAlert = false
     
     private let MAX_COUNTDOWN_TIME = 3 //seconds
     private let MAX_BOT_PREDICTION_TIME = 2 //seconds
@@ -93,12 +97,25 @@ struct FingersView: View {
             // Parameters
             let size = proxy.size
             let playerViews = createPlayerViews(players: players, bounds: size, circleSize: CGFloat(circleSize))
-
+            
             // View of the screen
             VStack(content:{
                 //--------------------------------
                 //--- View of the upper screen ---
                 //--------------------------------
+                
+                // Reset game button
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        self.showResetGameAlert = true
+                    }) {
+                        Image(systemName: "arrow.counterclockwise")
+                            .foregroundColor(.blue)
+                            .imageScale(.large)
+                    }
+                }
+                .padding()
                 
                 ZStack(content: {
                     // Big red circle
@@ -118,22 +135,22 @@ struct FingersView: View {
                     
                     // View logic
                     switch(state){
-                        case .Countdown:
-                            countDownTimerView(playerViews: playerViews)
-                        case .Result:
-                            ForEach(playerViews) { player in
-                                player.getButton(
-                                    size: CGFloat(circleSize),
-                                    gameobj: fingersGame,
-                                    isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false,
-                                    checkCup: true
-                                )
-                            }
+                    case .Countdown:
+                        countDownTimerView(playerViews: playerViews)
+                    case .Result:
+                        ForEach(playerViews) { player in
+                            player.getButton(
+                                size: CGFloat(circleSize),
+                                gameobj: fingersGame,
+                                isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false,
+                                checkCup: true
+                            )
+                        }
                         
-                            Text("Time!")
-                                .font(.system(size: 48))
-                        default:
-                            Text("")
+                        Text("Time!")
+                            .font(.system(size: 48))
+                    default:
+                        Text("")
                     }
                 })
                 .frame(width: size.width, height: size.height / 2)
@@ -143,34 +160,44 @@ struct FingersView: View {
                 //---------------------------------
                 
                 switch(state){
-                    case .Initial:
-                        Button("Predict") {
-                            self.state = gameState.Predict
-                        }
-                        .position(x: size.width / 2, y: size.width / 2)
-                    case .Predict:
-                        ZStack {
-                            generatePredictView(
-                                playerName: currentPlayerName,
-                                playerType: currentPlayerType
-                            )
-                        }
-                        .onAppear(
-                            perform: {
-                                currentPlayerName = fingersGame.currentPlayer().name
-                                currentPlayerType = fingersGame.currentPlayer().playerType
-                            }
+                case .Initial:
+                    Button("Predict") {
+                        self.state = gameState.Predict
+                    }
+                    .position(x: size.width / 2, y: size.width / 2)
+                case .Predict:
+                    ZStack {
+                        generatePredictView(
+                            playerName: currentPlayerName,
+                            playerType: currentPlayerType
                         )
-                        .onReceive(fingersGame.model.game.$currentPlayerIdx) { newIdx in
+                    }
+                    .onAppear(
+                        perform: {
                             currentPlayerName = fingersGame.currentPlayer().name
                             currentPlayerType = fingersGame.currentPlayer().playerType
                         }
-                    case .Countdown:
-                        Text("")
-                    case .Result:
-                        resultView(playerViews: playerViews)
+                    )
+                    .onReceive(fingersGame.model.game.$currentPlayerIdx) { newIdx in
+                        currentPlayerName = fingersGame.currentPlayer().name
+                        currentPlayerType = fingersGame.currentPlayer().playerType
+                    }
+                case .Countdown:
+                    Text("")
+                case .Result:
+                    resultView(playerViews: playerViews)
                 }
             })
+            .alert(isPresented: $showResetGameAlert) {
+                Alert(
+                    title: Text("Reset game"),
+                    message: Text("Are you sure you want to reset the game?"),
+                    primaryButton: .default(Text("Yes")) {
+                        print("Reset game")
+                        self.resetGame = true
+                    },
+                    secondaryButton: .cancel(Text("No")))
+            }
         }
     }
 
@@ -307,12 +334,5 @@ struct FingersView: View {
                 resultCounter -= 1
             }
         }
-    }
-}
-
-struct FingersView_Previews: PreviewProvider {
-    static var previews: some View {
-        let model = FingersViewModel(n_humans: 1, n_bots: 3)
-        FingersView(fingersGame: model)
     }
 }
