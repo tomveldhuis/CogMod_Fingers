@@ -283,13 +283,15 @@ struct FingersView: View {
     
     // Generates a botPredictionTimerView
     private func botPredictionTimerView() -> some View {
-        // Make decisions and prediction for the bot players
-        fingersGame.runBotModels()
-        
         return Text("Bot \(currentPlayerName) is predicting...")
             .font(.system(size: 30))
             .onReceive(timer) { time in
                 if botPredictionCounter == 0 {
+                    // Make decisions and prediction for the current bot player
+                    fingersGame.runBotModels()
+                    fingersGame.currentPlayer().makePrediction(prediction: 0)
+                    fingersGame.currentPlayer().makeDecision(decision: true)
+                    
                     botPredictionCounter = MAX_BOT_PREDICTION_TIME
                     print("Timer finished!")
                     
@@ -302,11 +304,11 @@ struct FingersView: View {
     
     // Generates a resultView
     private func resultView(playerViews: [PlayerView]) -> some View {
-        // Update bot models with knowledge about results from current round
-        self.fingersGame.updateBotModels()
-        
         // Update scores after the round has ended
         self.fingersGame.updateScores()
+        
+        // Update bot models with knowledge about results from current round
+        self.fingersGame.updateBotModels()
         
         // Check if the game is done by checking for the max score
         if self.fingersGame.checkIfGameIsOver() == true {

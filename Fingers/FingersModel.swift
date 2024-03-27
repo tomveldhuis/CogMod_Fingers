@@ -77,9 +77,23 @@ class Game: ObservableObject {
         return i
     }
     
+    func determineWinners() -> [Player] {
+        var winners: [Player] = []
+        let output = outputOnCup()
+        for player in self.players {
+            if player.prediction == output {
+                winners.append(player)
+            }
+        }
+        return winners
+    }
+    
     func updateScores() -> Void {
-        if currentPlayer().prediction! == outputOnCup() {
-            self.players[self.currentPlayerIdx].score += 1
+        for player in self.determineWinners() {
+            var player = player
+            print("Player \(player.name) had \(player.score)")
+            player.score += 1
+            print("and now \(player.name) has \(player.score)")
         }
     }
     

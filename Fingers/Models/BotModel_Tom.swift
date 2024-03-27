@@ -136,11 +136,10 @@ struct BotModel_Tom : BotModelProtocol {
                 case "predicting":
                     addToTrace(string: "Retrieving prediction from memory...")
                 
-                    // Use partial blended retrieval for prediction value
+                    // Use blended retrieval for prediction value
                     let pattern = Chunk(s: "retrieval", m: model)
                     pattern.setSlot(slot: "isa", value: "lastPrediction")
-                    pattern.setSlot(slot: "win", value: "yes")
-                    let (latency, result) = model.dm.blendedPartialRetrieve(chunk: pattern, mismatchFunction: mismatchFunction(_:_:))
+                    let (latency, result) = model.dm.blendedRetrieve(chunk: pattern)
                     model.time += 0.05 + latency
                     
                     let imaginal = model.buffers["imaginal"]!
@@ -187,7 +186,7 @@ struct BotModel_Tom : BotModelProtocol {
                         if i <= outputOnCup {
                             newDecision.setSlot(slot: "decision", value: "stay")
                         } else {
-                            newDecision.setSlot(slot: "decision", value: "pull")
+                            newDecision.setSlot(slot: "decision", value: "stay")
                         }
                         model.dm.addToDM(newDecision)
                     }
@@ -223,15 +222,6 @@ struct BotModel_Tom : BotModelProtocol {
         model.modifyLastAction(slot: "currentPrediction", value: Double(currentPrediction))
     }
     
-    /// Reset the model
-    mutating func reset() {
-        model.reset()
-        decision = nil
-        prediction = nil
-        feedback = ""
-        //run()
-    }
-    
     /// Modify a slot in the action buffer
     /// - Parameters:
     ///   - slot: the slot to be modified
@@ -248,31 +238,5 @@ struct BotModel_Tom : BotModelProtocol {
 
     func addToTrace(string: String) {
         model.addToTrace(string: name + "  " + string)
-    }
-    
-    /// Function that is executed whenever the bot makes a choice.
-    /// - Parameter fingerAction: "stay" or "pull"
-    mutating func choose(playerAction: String) {
-        model.run()
-        update()
-    }
-    
-    func mismatchFunction(_ x: Value, _ y: Value) -> Double? {
-        var mismatch: Double? = nil
-        // No mismatch penalty if slotvalue of "win" is equal to "yes" for both values
-        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("yes")) {
-            mismatch = 0.0
-        }
-        // If not, mismatch penalty is -1.0
-        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("no")) {
-            mismatch = -1.0
-        }
-        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("yes")) {
-            mismatch = -1.0
-        }
-        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("no")) {
-            mismatch = -1.0
-        }
-        return mismatch
     }
 }
