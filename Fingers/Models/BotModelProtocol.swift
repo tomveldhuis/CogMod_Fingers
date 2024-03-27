@@ -9,7 +9,7 @@ protocol BotModelProtocol {
     var feedback: String { get set }
     var decision: Bool? { get set}
     var prediction: Int? { get set }
-    mutating func run()
+    mutating func run(isActive: Bool)
     mutating func reset()
     func modifyLastAction(slot: String, value: String) -> Bool
     mutating func choose(playerAction: String)

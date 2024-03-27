@@ -204,7 +204,7 @@ struct FingersView: View {
                 print("Player \(currentPlayer.name) predicts \(index.description)")
                 
                 currentPlayer.makePrediction(prediction: index)
-                fingersGame.makeBotDecisions()
+                fingersGame.runBotModels()
                 
                 state = gameState.Countdown
             })
@@ -255,6 +255,7 @@ struct FingersView: View {
             .onReceive(timer) { time in
                 if botPredictionCounter == 0 {
                     // Make decisions and prediction for the current bot player
+                    fingersGame.runBotModels()
                     fingersGame.currentPlayer().makePrediction(prediction: 0)
                     fingersGame.currentPlayer().makeDecision(decision: true)
                     

@@ -50,7 +50,7 @@ class Game: ObservableObject {
         
         for i in 0..<localPlayerCount{
             if i < self.nr_bots {
-                localPlayers.append(Bot(id: i, name: "B\(i+1)"))
+                localPlayers.append(Bot(id: i, name: "B\(i+1)", playerCount: localPlayerCount))
             } else {
                 localPlayers.append(Human(id: i, name: "H\(i+1-nr_bots)"))
             }
@@ -113,6 +113,16 @@ class Game: ObservableObject {
             print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
         }
     }
+    
+    func getBotPlayers() -> [Player] {
+        var botPlayers: [Player] = []
+        for player in players {
+            if player.playerType == .Bot {
+                botPlayers.append(player)
+            }
+        }
+        return botPlayers
+    }
 }
 
 protocol Player {
@@ -135,6 +145,8 @@ protocol Player {
     func resetPrediction()
     // Make a decision about whether to put your finger on the cup
     func makeDecision(decision: Bool)
+    
+    func runModel(isActive: Bool)
 }
 
 class Human: Player {
@@ -173,6 +185,10 @@ class Human: Player {
     func makeDecision(decision: Bool) {
         self.decision = decision
     }
+    
+    func runModel(isActive: Bool) {
+        
+    }
 }
 
 class Bot: Player {
@@ -184,9 +200,9 @@ class Bot: Player {
     var prediction: Int?
     var decision: Bool?
     
-    var model: BotModel
+    var model: BotModel_Tom
     
-    init(id: Int, name: String) {
+    init(id: Int, name: String, playerCount: Int) {
         self.id = id
         self.name = name
         self.playerType = .Bot
@@ -195,36 +211,48 @@ class Bot: Player {
         self.prediction = nil
         self.decision = nil
         
-        self.model = BotModel()
-    }
-    
-    func makePrediction() {
-        // TODO: add prediction making from model
-        self.prediction = 0 //For now, assume that bots always predict 0
+        self.model = BotModel_Tom(playerCount: playerCount)
     }
     
     func resetPrediction() {
         self.prediction = nil
     }
     
-    func makeDecision() {
-        // TODO: add decision making from model
-        self.decision = true //For now, assume that bots always stay
-    }
-    
-    // Overloaded functions for bot predictions/decisions
     func makeDecision(decision: Bool) {
-        makeDecision()
+        self.decision = decision
     }
     func makePrediction(prediction: Int) {
-        makePrediction()
+        self.prediction = prediction
     }
     
-    
-    
-//  When a round ends, append it to memory (using some tactic)
-    func commitMemory(){}
-    func pullHistory(){}
-    func decidePullOrStay(){}
-    func predictFingers(){}
+    func runModel(isActive: Bool) {
+        self.model.run(isActive: isActive)
+        
+        // Check for action chunks
+        if self.model.model.actionChunk() {
+            let actionType = self.model.model.lastAction(slot: "isa")!
+            if actionType == "decision_prediction" {
+                // Add prediction
+                let predictionAction = self.model.model.lastAction(slot: "prediction")!
+                makePrediction(prediction: Int(Double(predictionAction)!))
+            }
+            if actionType == "decision" || actionType == "decision_prediction" {
+                // Add decision
+                let decisionAction = self.model.model.lastAction(slot: "decision")!
+                if decisionAction == "stay" {
+                    makeDecision(decision: true)
+                }
+                if decisionAction == "pull" {
+                    makeDecision(decision: false)
+                }
+            }
+        }
+    }
+//
+//
+///  When a round ends, append it to memory (using some tactic)
+//    func commitMemory(){}
+//    func pullHistory(){}
+//    func decidePullOrStay(){}
+//    func predictFingers(){}
 }

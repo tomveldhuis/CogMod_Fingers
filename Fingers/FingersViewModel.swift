@@ -23,6 +23,10 @@ class FingersViewModel: ObservableObject {
         return self.model.game.players
     }
     
+    func getBotPlayers() -> [Player] {
+        return self.model.game.getBotPlayers()
+    }
+    
     func getPlayerCount() -> Int {
         return self.model.game.playerCount
     }
@@ -47,10 +51,12 @@ class FingersViewModel: ObservableObject {
         return output
     }
     
-    func makeBotDecisions() {
-        for player in getPlayers() {
-            if player.playerType == .Bot {
-                player.makeDecision(decision: false)
+    func runBotModels() {
+        for player in getBotPlayers() {
+            if player.id == currentPlayer().id {
+                player.runModel(isActive: true)
+            } else {
+                player.runModel(isActive: false)
             }
         }
     }
