@@ -215,6 +215,7 @@ struct BotModel_Tom : BotModelProtocol {
                     goal.setSlot(slot: "state", value: "deciding")
                     done = true
                     addToTrace(string: "Waiting for the next round...")
+                    model.waitingForAction = true
                     model.time += breakTime
                 default:
                     done = true
@@ -223,9 +224,13 @@ struct BotModel_Tom : BotModelProtocol {
         }
     }
     
-    func updateActionChunk(outputOnCup: Int, currentPrediction: Int) {
-        model.modifyLastAction(slot: "result", value: Double(outputOnCup))
-        model.modifyLastAction(slot: "currentPrediction", value: Double(currentPrediction))
+    func updateActionChunk(outputOnCup: Int, currentPrediction: Int) -> Bool {
+        if model.waitingForAction {
+            model.modifyLastAction(slot: "result", value: Double(outputOnCup))
+            model.modifyLastAction(slot: "currentPrediction", value: Double(currentPrediction))
+            return true
+        }
+        return false
     }
     
     func mismatchFunction(x: Value, y: Value) -> Double? {

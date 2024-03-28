@@ -170,22 +170,14 @@ struct FingersView: View {
                     }
                     .position(x: size.width / 2, y: size.width / 2)
                 case .Predict:
-                    ZStack {
-                        generatePredictView(
-                            playerName: currentPlayerName,
-                            playerType: currentPlayerType
-                        )
-                    }
-                    .onAppear(
-                        perform: {
-                            currentPlayerName = fingersGame.currentPlayer().name
-                            currentPlayerType = fingersGame.currentPlayer().playerType
-                        }
-                    )
-                    .onReceive(fingersGame.model.game.$currentPlayerIdx) { newIdx in
-                        currentPlayerName = fingersGame.currentPlayer().name
-                        currentPlayerType = fingersGame.currentPlayer().playerType
-                    }
+                    generatePredictView()
+//                    }
+//                    .onAppear(
+//                        perform: {
+//                            currentPlayerName = fingersGame.currentPlayer().name
+//                            currentPlayerType = fingersGame.currentPlayer().playerType
+//                        }
+//                    )
                 case .Countdown:
                     Text("")
                 case .Result:
@@ -250,8 +242,9 @@ struct FingersView: View {
     
     // Generates a PredictView or a botPredictionTimerView,
     // depending on whether the current player is a Human or a Bot
-    private func generatePredictView(playerName: String, playerType: playerType) -> some View {
-        if playerType == .Human {
+    private func generatePredictView() -> some View {
+        print("Generate PredictView")
+        if fingersGame.currentPlayer().playerType == .Human {
             return AnyView(PredictView(
                     game: fingersGame,
                     buttons: generateNumberedButtons()
@@ -283,7 +276,7 @@ struct FingersView: View {
         // Make decisions and prediction for the current bot player
         fingersGame.runBotModels()
         
-        return Text("Bot \(currentPlayerName) is predicting...")
+        return Text("Bot \(fingersGame.currentPlayer().name) is predicting...")
             .font(.system(size: 30))
             .onReceive(timer) { time in
                 if botPredictionCounter == 0 {

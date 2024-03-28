@@ -73,27 +73,13 @@ class Game: ObservableObject {
                 i += 1
             }
         }
-        print("N on cup: \(i)")
+        //print("N on cup: \(i)")
         return i
     }
     
-    func determineWinners() -> [Player] {
-        var winners: [Player] = []
-        let output = outputOnCup()
-        for player in self.players {
-            if player.prediction == output {
-                winners.append(player)
-            }
-        }
-        return winners
-    }
-    
     func updateScores() -> Void {
-        for player in self.determineWinners() {
-            var player = player
-            print("Player \(player.name) had \(player.score)")
-            player.score += 1
-            print("and now \(player.name) has \(player.score)")
+        if currentPlayer().prediction! == outputOnCup() {
+            self.players[self.currentPlayerIdx].score += 1
         }
     }
     
@@ -107,10 +93,10 @@ class Game: ObservableObject {
         // Returns true if all players have been checked
         self.currentPlayerIdx += 1
         if self.currentPlayerIdx == self.playerCount {
-            print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[0].name)")
+            //print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[0].name)")
             self.currentPlayerIdx = 0
         } else {
-            print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
+            //print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
         }
     }
     
