@@ -31,7 +31,7 @@ struct BotModel_Tom : BotModelProtocol {
             // Set initial goal buffer
             let chunk = Chunk(s: model.generateName(string: "goal"), m: model)
             chunk.setSlot(slot: "isa", value: "goal")
-            chunk.setSlot(slot: "state", value: "start")
+            chunk.setSlot(slot: "state", value: "deciding")
             chunk.setSlot(slot: "numPlayers", value: Double(playerCount))
             if isActive {
                 chunk.setSlot(slot: "isActive", value: "yes")
@@ -54,41 +54,45 @@ struct BotModel_Tom : BotModelProtocol {
         while !done {
             // Switch between states in the goal buffer
             switch (goal.slotvals["state"]!.description) {
-                case "start":
-                    // Initially, make a random decision
-                    // and put it in the imaginal buffer
-                    let imaginal = Chunk(s: model.generateName(string: "imaginal"), m: model)
-                    if actrNoise(noise: 1.0) > 0 {
-                        imaginal.setSlot(slot: "decision", value: "stay")
-                        addToTrace(string: "Start with random decision: stay")
-                    } else {
-                        imaginal.setSlot(slot: "decision", value: "pull")
-                        addToTrace(string: "Start with random decision: pull")
-                    }
-                    model.buffers["imaginal"] = imaginal
-                    model.time += 0.05 + model.imaginalActionTime
-                
-                    // Check if the BotModel is the current player
-                    if goal.slotvals["isActive"]!.description == "yes" {
-                        // If yes, then retrieve a prediction value
-                        goal.setSlot(slot: "state", value: "predicting")
-                    } else {
-                        // If no, then make an action chunk
-                        // and wait for the game to finish the round
-                        let action = Chunk(s: "action", m: model)
-                        action.setSlot(slot: "isa", value: "decision")
-                        action.setSlot(slot: "decision", value: imaginal.slotvals["decision"]!)
-                        model.buffers["action"] = action
-                        model.time += 0.05
-                        addToTrace(string: "Created an action chunk")
-                        
-                        goal.setSlot(slot: "state", value: "waiting")
-                        done = true
-                        model.waitingForAction = true
-                        addToTrace(string: "Waiting for the round to finish...")
-                    }
+//                case "start":
+//                    // Initially, make a random decision
+//                    // and put it in the imaginal buffer
+//                    let imaginal = Chunk(s: model.generateName(string: "imaginal"), m: model)
+//                    if actrNoise(noise: 1.0) > 0 {
+//                        imaginal.setSlot(slot: "decision", value: "stay")
+//                        addToTrace(string: "Start with random decision: stay")
+//                    } else {
+//                        imaginal.setSlot(slot: "decision", value: "pull")
+//                        addToTrace(string: "Start with random decision: pull")
+//                    }
+//                    model.buffers["imaginal"] = imaginal
+//                    model.time += 0.05 + model.imaginalActionTime
+//
+//                    // Check if the BotModel is the current player
+//                    if goal.slotvals["isActive"]!.description == "yes" {
+//                        // If yes, then retrieve a prediction value
+//                        goal.setSlot(slot: "state", value: "predicting")
+//                    } else {
+//                        // If no, then make an action chunk
+//                        // and wait for the game to finish the round
+//                        let action = Chunk(s: "action", m: model)
+//                        action.setSlot(slot: "isa", value: "decision")
+//                        action.setSlot(slot: "decision", value: imaginal.slotvals["decision"]!)
+//                        model.buffers["action"] = action
+//                        model.time += 0.05
+//                        addToTrace(string: "Created an action chunk")
+//
+//                        goal.setSlot(slot: "state", value: "waiting")
+//                        done = true
+//                        model.waitingForAction = true
+//                        addToTrace(string: "Waiting for the round to finish...")
+//                    }
                 case "deciding":
                     addToTrace(string: "Retrieving decision from memory...")
+                
+                    // Create a new chunk for the imaginal buffer
+                    let imaginal = Chunk(s: model.generateName(string: "imaginal"), m: model)
+                    model.time += model.imaginalActionTime
                 
                     // Use regular retrieval for decision ("stay" or "pull")
                     let retrieval = Chunk(s: "retrieval", m: model)
@@ -96,7 +100,7 @@ struct BotModel_Tom : BotModelProtocol {
                     let (latency, result) = model.dm.retrieve(chunk: retrieval)
                     model.time += 0.05 + latency
                 
-                    let imaginal = model.buffers["imaginal"]!
+                    // Check whether a chunk was retrieved
                     if let retrievedChunk = result {
                         // Put retrieved decision in the imaginal buffer
                         imaginal.setSlot(slot: "decision", value: retrievedChunk.slotvals["decision"]!)
@@ -113,6 +117,7 @@ struct BotModel_Tom : BotModelProtocol {
                         }
                         model.time += 0.05
                     }
+                    model.buffers["imaginal"] = imaginal
                     
                     // Check if the BotModel is the current player
                     if goal.slotvals["isActive"]!.description == "yes" {
@@ -139,7 +144,8 @@ struct BotModel_Tom : BotModelProtocol {
                     // Use blended retrieval for prediction value
                     let pattern = Chunk(s: "retrieval", m: model)
                     pattern.setSlot(slot: "isa", value: "lastPrediction")
-                    let (latency, result) = model.dm.blendedRetrieve(chunk: pattern)
+                    pattern.setSlot(slot: "win", value: "yes")
+                    let (latency, result) = model.dm.blendedPartialRetrieve(chunk: pattern, mismatchFunction: mismatchFunction)
                     model.time += 0.05 + latency
                     
                     let imaginal = model.buffers["imaginal"]!
@@ -186,7 +192,7 @@ struct BotModel_Tom : BotModelProtocol {
                         if i <= outputOnCup {
                             newDecision.setSlot(slot: "decision", value: "stay")
                         } else {
-                            newDecision.setSlot(slot: "decision", value: "stay")
+                            newDecision.setSlot(slot: "decision", value: "pull")
                         }
                         model.dm.addToDM(newDecision)
                     }
@@ -220,6 +226,25 @@ struct BotModel_Tom : BotModelProtocol {
     func updateActionChunk(outputOnCup: Int, currentPrediction: Int) {
         model.modifyLastAction(slot: "result", value: Double(outputOnCup))
         model.modifyLastAction(slot: "currentPrediction", value: Double(currentPrediction))
+    }
+    
+    func mismatchFunction(x: Value, y: Value) -> Double? {
+        var mismatch: Double? = nil
+        // No mismatch penalty if slotvalue of "win" is equal to "yes" for both values
+        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("yes")) {
+            mismatch = 0.0
+        }
+        // If not, mismatch penalty is -1.0
+        if x.isEqual(value: Value.Text("yes")) && y.isEqual(value: Value.Text("no")) {
+            mismatch = -1.0
+        }
+        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("yes")) {
+            mismatch = -1.0
+        }
+        if x.isEqual(value: Value.Text("no")) && y.isEqual(value: Value.Text("no")) {
+            mismatch = -1.0
+        }
+        return mismatch
     }
     
     /// Modify a slot in the action buffer

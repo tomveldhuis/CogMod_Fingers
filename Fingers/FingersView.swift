@@ -272,9 +272,6 @@ struct FingersView: View {
                     textToUpdate = ""
                     state = gameState.Result
                 } else {
-                    // Update decisions for each human player
-                    
-                    
                     textToUpdate = countDownCounter.description
                     countDownCounter -= 1
                 }
@@ -283,15 +280,13 @@ struct FingersView: View {
     
     // Generates a botPredictionTimerView
     private func botPredictionTimerView() -> some View {
+        // Make decisions and prediction for the current bot player
+        fingersGame.runBotModels()
+        
         return Text("Bot \(currentPlayerName) is predicting...")
             .font(.system(size: 30))
             .onReceive(timer) { time in
                 if botPredictionCounter == 0 {
-                    // Make decisions and prediction for the current bot player
-                    fingersGame.runBotModels()
-                    fingersGame.currentPlayer().makePrediction(prediction: 0)
-                    fingersGame.currentPlayer().makeDecision(decision: true)
-                    
                     botPredictionCounter = MAX_BOT_PREDICTION_TIME
                     print("Timer finished!")
                     
