@@ -20,7 +20,7 @@ class Declarative: Codable  {
     /// Retrieval threshold parameter (rt in ACT-R)
     var retrievalThreshold: Double = -2
     /// Activation noise parameter (ans in ACT-R). Can be nil to switch off noise.
-    var activationNoise: Double? = 0.25
+    var activationNoise: Double? = 0.5
     /// A dictionary with all the chunks in DM, indexed by chunk name
     var chunks = [String:Chunk]()
     /// The mismatch penalty, to be used in partial matching (mp in ACT-R)

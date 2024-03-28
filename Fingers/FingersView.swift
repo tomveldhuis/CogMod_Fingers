@@ -171,13 +171,6 @@ struct FingersView: View {
                     .position(x: size.width / 2, y: size.width / 2)
                 case .Predict:
                     generatePredictView()
-//                    }
-//                    .onAppear(
-//                        perform: {
-//                            currentPlayerName = fingersGame.currentPlayer().name
-//                            currentPlayerType = fingersGame.currentPlayer().playerType
-//                        }
-//                    )
                 case .Countdown:
                     Text("")
                 case .Result:
