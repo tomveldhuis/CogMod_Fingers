@@ -75,13 +75,11 @@ struct FingersView: View {
     
     @State private var countDownCounter = 3
     @State private var botPredictionCounter = 2;
-    @State private var resultCounter = 5
     
     @State private var showResetGameAlert = false
     
     private let MAX_COUNTDOWN_TIME = 3 //seconds
     private let MAX_BOT_PREDICTION_TIME = 2 //seconds
-    private let MAX_RESULT_TIME = 10 //seconds
     private let circleSize = 50
     
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -310,15 +308,17 @@ struct FingersView: View {
                 .font(.system(size: 20))
             Text(fingersGame.currentPlayer().score.description)
                 .font(.system(size: 30))
-        }
-        .onReceive(timer) { time in
-            if resultCounter == 0 {
+            Button(action: {
                 state = gameState.Initial
                 fingersGame.resetCurrentPrediction()
                 fingersGame.nextPlayer()
-                resultCounter = MAX_RESULT_TIME
-            } else {
-                resultCounter -= 1
+            }) {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 24))
+                    .foregroundColor(.white)
+                    .padding(12)
+                    .background(Color.blue)
+                    .clipShape(Circle())
             }
         }
     }
