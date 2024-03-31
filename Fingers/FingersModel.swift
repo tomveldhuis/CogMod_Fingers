@@ -36,6 +36,7 @@ class Game: ObservableObject {
     var nr_humans: Int
     var nr_bots: Int
     var playerCount: Int
+    var round: Int
     
     var players: [Player]
     @Published var currentPlayerIdx: Int
@@ -44,6 +45,7 @@ class Game: ObservableObject {
     init(nr_humans: Int, nr_bots: Int){
         self.nr_humans = nr_humans
         self.nr_bots = nr_bots
+        self.round = 1
         
         var localPlayers: [Player] = []
         let localPlayerCount = nr_humans + nr_bots
@@ -90,13 +92,10 @@ class Game: ObservableObject {
     
     // Goes to the next player
     func nextPlayer() {
-        // Returns true if all players have been checked
+        self.round += 1
         self.currentPlayerIdx += 1
         if self.currentPlayerIdx == self.playerCount {
-            //print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[0].name)")
             self.currentPlayerIdx = 0
-        } else {
-            //print("\(self.players[self.currentPlayerIdx-1].name) -> \(self.players[self.currentPlayerIdx].name)")
         }
     }
     
@@ -246,11 +245,4 @@ class Bot: Player {
         }
         self.model.run(isActive: isActive)
     }
-//
-//
-///  When a round ends, append it to memory (using some tactic)
-//    func commitMemory(){}
-//    func pullHistory(){}
-//    func decidePullOrStay(){}
-//    func predictFingers(){}
 }

@@ -20,11 +20,11 @@ struct PlayerView: Identifiable {
     @State var player: Player
     let position: CGPoint?
     
-    func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, checkCup: Bool) -> some View {
+    func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, currentState: gameState) -> some View {
         var color = Color.black
         var text = id
         
-        if checkCup {
+        if currentState == .Result {
             color = (player.decision!) ? Color.green : Color.red
             text = player.score.description
         }
@@ -46,12 +46,12 @@ struct PlayerView: Identifiable {
         .onLongPressGesture(minimumDuration: .infinity) {
             //pressed = true
         } onPressingChanged: { isPressing in
-            if self.player.playerType == .Human {
+            if self.player.playerType == .Human && currentState != .Result {
                 if isPressing {
-                    self.player.decision = true
+                    player.makeDecision(decision: true)
                     print(self.id)
                 } else {
-                    self.player.decision = false
+                    player.makeDecision(decision: false)
                     print("Finished")
                 }
             }
@@ -77,6 +77,7 @@ struct FingersView: View {
     @State private var botPredictionCounter = 2;
     
     @State private var showResetGameAlert = false
+    @State private var updateScores = false
     
     private let MAX_COUNTDOWN_TIME = 3 //seconds
     private let MAX_BOT_PREDICTION_TIME = 2 //seconds
@@ -131,7 +132,7 @@ struct FingersView: View {
                             size: CGFloat(circleSize),
                             gameobj: fingersGame,
                             isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false,
-                            checkCup: false
+                            currentState: state
                         )
                     }
                     
@@ -140,15 +141,6 @@ struct FingersView: View {
                     case .Countdown:
                         countDownTimerView(playerViews: playerViews)
                     case .Result:
-                        ForEach(playerViews) { player in
-                            player.getButton(
-                                size: CGFloat(circleSize),
-                                gameobj: fingersGame,
-                                isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false,
-                                checkCup: true
-                            )
-                        }
-                        
                         Text("Time!")
                             .font(.system(size: 48))
                     default:
@@ -165,6 +157,8 @@ struct FingersView: View {
                 case .Initial:
                     Button("Predict") {
                         self.state = gameState.Predict
+                        self.updateScores = true
+                        print("----- Round \(fingersGame.model.game.round.description) -----")
                     }
                     .position(x: size.width / 2, y: size.width / 2)
                 case .Predict:
@@ -175,16 +169,16 @@ struct FingersView: View {
                     resultView(playerViews: playerViews)
                 }
             })
-            .alert(isPresented: $showResetGameAlert) {
-                Alert(
-                    title: Text("Reset game"),
-                    message: Text("Are you sure you want to reset the game?"),
-                    primaryButton: .default(Text("Yes")) {
-                        print("Reset game")
-                        self.resetGame = true
-                    },
-                    secondaryButton: .cancel(Text("No")))
-            }
+        }
+        .alert(isPresented: $showResetGameAlert) {
+            Alert(
+                title: Text("Reset game"),
+                message: Text("Are you sure you want to reset the game?"),
+                primaryButton: .default(Text("Yes")) {
+                    print("Reset game")
+                    self.resetGame = true
+                },
+                secondaryButton: .cancel(Text("No")))
         }
     }
 
@@ -283,16 +277,18 @@ struct FingersView: View {
     
     // Generates a resultView
     private func resultView(playerViews: [PlayerView]) -> some View {
-        // Update scores after the round has ended
-        self.fingersGame.updateScores()
-        
-        // Update bot models with knowledge about results from current round
-        self.fingersGame.updateBotModels()
-        
-        // Check if the game is done by checking for the max score
-        if self.fingersGame.checkIfGameIsOver() == true {
-            print("Game over!")
-            // TODO: return game-over view!
+        if self.updateScores {
+            // Update scores after the round has ended
+            self.fingersGame.updateScores()
+            
+            // Update bot models with knowledge about results from current round
+            self.fingersGame.updateBotModels()
+            
+            // Check if the game is done by checking for the max score
+            if self.fingersGame.checkIfGameIsOver() == true {
+                print("Game over!")
+                // TODO: return game-over view!
+            }
         }
         
         return VStack {
@@ -320,6 +316,9 @@ struct FingersView: View {
                     .background(Color.blue)
                     .clipShape(Circle())
             }
+        }
+        .onAppear {
+            self.updateScores = false
         }
     }
 }
