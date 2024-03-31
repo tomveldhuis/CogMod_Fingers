@@ -49,10 +49,10 @@ struct PlayerView: Identifiable {
             if self.player.playerType == .Human && currentState != .Result {
                 if isPressing {
                     player.makeDecision(decision: true)
-                    print(self.id)
+                    print("-> \(self.id) stays")
                 } else {
                     player.makeDecision(decision: false)
-                    print("Finished")
+                    print("-> \(self.id) pulls")
                 }
             }
         }
@@ -158,7 +158,7 @@ struct FingersView: View {
                     Button("Predict") {
                         self.state = gameState.Predict
                         self.updateScores = true
-                        print("----- Round \(fingersGame.model.game.round.description) -----")
+                        print("----- Round \(fingersGame.getRound().description) -----")
                     }
                     .position(x: size.width / 2, y: size.width / 2)
                 case .Predict:
@@ -195,7 +195,7 @@ struct FingersView: View {
         var playerViews: [PlayerView] = []
         
         var path = Path()
-        for playerD in self.fingersGame.model.game.players {
+        for playerD in self.fingersGame.getPlayers() {
             path.addArc(center: CGPoint(x: x, y: y), radius: x - circleSize, startAngle: startAngle, endAngle: startAngle + angleInc, clockwise: true)
             playerViews.append(PlayerView(player: playerD, position: path.currentPoint))
             startAngle += angleInc
@@ -231,7 +231,7 @@ struct FingersView: View {
         print("Generate PredictView")
         if fingersGame.currentPlayer().playerType == .Human {
             return AnyView(PredictView(
-                    game: fingersGame,
+                    model: fingersGame,
                     buttons: generateNumberedButtons()
                 )
                 .padding()
@@ -285,10 +285,10 @@ struct FingersView: View {
             self.fingersGame.updateBotModels()
             
             // Check if the game is done by checking for the max score
-            if self.fingersGame.checkIfGameIsOver() == true {
-                print("Game over!")
-                // TODO: return game-over view!
-            }
+//            if self.fingersGame.checkIfGameIsOver() == true {
+//                print("Game over!")
+//                // TODO: return game-over view!
+//            }
         }
         
         return VStack {
@@ -307,7 +307,7 @@ struct FingersView: View {
             Button(action: {
                 state = gameState.Initial
                 fingersGame.resetCurrentPrediction()
-                fingersGame.nextPlayer()
+                fingersGame.nextRound()
             }) {
                 Image(systemName: "play.fill")
                     .font(.system(size: 24))

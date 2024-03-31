@@ -16,23 +16,23 @@ class FingersViewModel: ObservableObject {
     init(n_humans: Int, n_bots: Int) {
         self.nr_humans = n_humans
         self.nr_bots = n_bots
-        self.model = FingersModel(n_humans: self.nr_humans, n_bots: self.nr_bots)
+        self.model = FingersModel(nr_humans: self.nr_humans, nr_bots: self.nr_bots)
     }
     
     func getPlayers() -> [Player] {
-        return self.model.game.players
+        return self.model.players
     }
     
     func getBotPlayers() -> [Player] {
-        return self.model.game.getBotPlayers()
+        return self.model.getBotPlayers()
     }
     
     func getPlayerCount() -> Int {
-        return self.model.game.playerCount
+        return self.model.playerCount
     }
     
     func getOutputOnCup() -> Int {
-        return self.model.game.outputOnCup()
+        return self.model.outputOnCup()
     }
     
     func runBotModels() {
@@ -65,19 +65,23 @@ class FingersViewModel: ObservableObject {
     }
     
     func currentPlayer() -> Player {
-        return self.model.game.currentPlayer()
+        return self.model.currentPlayer()
     }
     
     func resetCurrentPrediction() {
         currentPlayer().resetPrediction()
     }
     
-    func nextPlayer() {
-        self.model.game.nextPlayer()
+    func nextRound() {
+        self.model.nextRound()
     }
     
     func updateScores() -> Void {
-        self.model.game.updateScores()
+        self.model.updateScores()
+    }
+    
+    func getRound() -> Int {
+        return self.model.round
     }
     
     func checkIfGameIsOver() -> Bool {

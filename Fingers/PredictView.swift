@@ -15,13 +15,13 @@ struct NumberButton {
 struct PredictView: View {
     var buttons: [NumberButton]
     let columns: [GridItem]
-    var game: FingersViewModel
+    var model: FingersViewModel
     @State var playerName: String = ""
     
-    init(game: FingersViewModel, buttons: [NumberButton]) {
+    init(model: FingersViewModel, buttons: [NumberButton]) {
         self.buttons = buttons
         self.columns = [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())]
-        self.game = game
+        self.model = model
     }
     
     var body: some View {
@@ -31,8 +31,8 @@ struct PredictView: View {
                 .font(.title)
                 .multilineTextAlignment(.center)
                 .padding()
-                .onReceive(self.game.model.game.$currentPlayerIdx) { newIdx in
-                    self.playerName = self.game.currentPlayer().name
+                .onReceive(self.model.model.$currentPlayerIdx) { newIdx in
+                    self.playerName = self.model.currentPlayer().name
                 }
             Divider()
             // Input buttons
