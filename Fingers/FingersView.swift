@@ -18,7 +18,6 @@ struct PlayerView: Identifiable {
     var id: String { player.name }
     
     @State var player: Player
-    @State var isPressing: Bool = false
     let position: CGPoint?
     
     func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, currentState: gameState) -> some View {
@@ -55,8 +54,10 @@ struct PlayerView: Identifiable {
                     player.makeDecision(decision: false)
                     print("-> \(self.id) pulls")
                 }
+                if currentState == .Initial {
+                    gameobj.updatePressedNumber()
+                }
             }
-            self.isPressing = isPressing
         }
     }
 }
@@ -156,17 +157,25 @@ struct FingersView: View {
                 //---------------------------------
                 
                 switch(state){
-                case .Initial:
-                    Text("Place your finger on the cup")
-                        .position(x: size.width / 2, y: size.width / 2)
-                    
-                    initialView(playerViews: playerViews)
-                case .Predict:
-                    generatePredictView()
-                case .Countdown:
-                    Text("")
-                case .Result:
-                    resultView(playerViews: playerViews)
+                    case .Initial:
+                        VStack {
+                            Text("Place your fingers on the cup")
+                                .font(.system(size: 20))
+                                .position(x: size.width / 2, y: size.width / 2)
+                                .onReceive(fingersGame.$pressedNumber) { newValue in
+                                    if newValue == fingersGame.nr_humans {
+                                        self.state = gameState.Predict
+                                        self.updateScores = true
+                                        print("----- Round \(fingersGame.getRound().description) -----")
+                                    }
+                                }
+                        }
+                    case .Predict:
+                        generatePredictView()
+                    case .Countdown:
+                        Text("")
+                    case .Result:
+                        resultView(playerViews: playerViews)
                 }
             })
         }
@@ -195,21 +204,12 @@ struct FingersView: View {
         var playerViews: [PlayerView] = []
         
         var path = Path()
-        for playerD in self.fingersGame.getPlayers() {
+        for player in self.fingersGame.getPlayers() {
             path.addArc(center: CGPoint(x: x, y: y), radius: x - circleSize, startAngle: startAngle, endAngle: startAngle + angleInc, clockwise: true)
-            playerViews.append(PlayerView(player: playerD, position: path.currentPoint))
+            playerViews.append(PlayerView(player: player, position: path.currentPoint))
             startAngle += angleInc
         }
         return playerViews
-    }
-    
-    private func allPlayersPressing(players: [PlayerView]) -> Bool {
-        for player in players {
-            if !player.isPressing && player.player.playerType == .Human {
-                return false
-            }
-        }
-        return true
     }
     
     // Generate numbered buttons for the PredictView
@@ -286,17 +286,6 @@ struct FingersView: View {
                     }
                 }
         }
-    }
-    
-    private func initialView(playerViews: [PlayerView]) -> some View {
-        //if playerViews.allSatisfy({ $0.isPressing }) {
-        if allPlayersPressing(players: playerViews) {
-            self.state = gameState.Predict
-            self.updateScores = true
-            print("----- Round \(fingersGame.getRound().description) -----")
-        }
-        
-        return EmptyView()
     }
     
     // Generates a resultView

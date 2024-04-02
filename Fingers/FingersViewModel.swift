@@ -9,6 +9,7 @@ import SwiftUI
 
 class FingersViewModel: ObservableObject {
     @Published var model: FingersModel
+    @Published var pressedNumber: Int
     
     var nr_humans: Int
     var nr_bots: Int
@@ -17,10 +18,15 @@ class FingersViewModel: ObservableObject {
         self.nr_humans = n_humans
         self.nr_bots = n_bots
         self.model = FingersModel(nr_humans: self.nr_humans, nr_bots: self.nr_bots)
+        self.pressedNumber = 0
     }
     
     func getPlayers() -> [Player] {
         return self.model.players
+    }
+    
+    func getHumanPlayers() -> [Player] {
+        return self.model.getHumanPlayers()
     }
     
     func getBotPlayers() -> [Player] {
@@ -82,6 +88,16 @@ class FingersViewModel: ObservableObject {
     
     func getRound() -> Int {
         return self.model.round
+    }
+    
+    func updatePressedNumber() {
+        var newNumber = 0
+        for player in getHumanPlayers() {
+            if player.decision == true {
+                newNumber += 1
+            }
+        }
+        self.pressedNumber = newNumber
     }
     
     func checkIfGameIsOver() -> Bool {
