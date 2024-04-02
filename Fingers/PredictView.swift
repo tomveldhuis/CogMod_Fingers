@@ -27,13 +27,13 @@ struct PredictView: View {
     var body: some View {
         VStack {
             // Text updates when current player changes
-            Text("Player \(self.playerName):\nPredict the number of fingers remaining")
-                .font(.title)
-                .multilineTextAlignment(.center)
-                .padding()
+            Text("Player \(self.playerName):")
+                .font(.system(size: 28))
                 .onReceive(self.model.model.$currentPlayerIdx) { newIdx in
                     self.playerName = self.model.currentPlayer().name
                 }
+            Text("Predict the remaining number of fingers")
+                .font(.system(size: 18))
             Divider()
             // Input buttons
             LazyVGrid(columns: columns, spacing: 16) {

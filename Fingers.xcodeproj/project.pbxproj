@@ -39,6 +39,7 @@
 		E2D01AC92B83943A00370E22 /* FingersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01AC82B83943A00370E22 /* FingersUITests.swift */; };
 		E2D01ACB2B83943A00370E22 /* FingersUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01ACA2B83943A00370E22 /* FingersUITestsLaunchTests.swift */; };
 		E2F87EB52BB99128009D91B9 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F87EB42BB99128009D91B9 /* Player.swift */; };
+		E2F87EB82BBA06B5009D91B9 /* logo_font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -94,6 +95,8 @@
 		E2D01AC82B83943A00370E22 /* FingersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersUITests.swift; sourceTree = "<group>"; };
 		E2D01ACA2B83943A00370E22 /* FingersUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		E2F87EB42BB99128009D91B9 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = logo_font.ttf; sourceTree = "<group>"; };
+		E2F87EB92BBA0851009D91B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -184,6 +187,8 @@
 		E2D01AAC2B83943400370E22 /* Fingers */ = {
 			isa = PBXGroup;
 			children = (
+				E2F87EB92BBA0851009D91B9 /* Info.plist */,
+				E2F87EB62BBA06B5009D91B9 /* Fonts */,
 				E2252E822BB581860054AE4C /* Sprites */,
 				E20BABD92BA9C9AF0038FB13 /* PublicChunk.swift */,
 				E20BABD42BA9C9350038FB13 /* Models */,
@@ -224,6 +229,14 @@
 				E2D01ACA2B83943A00370E22 /* FingersUITestsLaunchTests.swift */,
 			);
 			path = FingersUITests;
+			sourceTree = "<group>";
+		};
+		E2F87EB62BBA06B5009D91B9 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -333,6 +346,7 @@
 				E2D01AB52B83943900370E22 /* Preview Assets.xcassets in Resources */,
 				E2D01AB22B83943900370E22 /* Assets.xcassets in Resources */,
 				E2252E842BB581870054AE4C /* fingers_art.jpg in Resources */,
+				E2F87EB82BBA06B5009D91B9 /* logo_font.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,11 +560,14 @@
 				DEVELOPMENT_TEAM = 9972AHA2MW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fingers/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -579,11 +596,14 @@
 				DEVELOPMENT_TEAM = 9972AHA2MW;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Fingers/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

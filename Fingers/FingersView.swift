@@ -31,7 +31,7 @@ struct PlayerView: Identifiable {
         
         var strokeColor = color
         if isCurrentPlayer {
-            strokeColor = Color.orange
+            strokeColor = Color.blue
         }
         
         return ZStack {
@@ -138,13 +138,13 @@ struct FingersView: View {
                     
                     // View logic
                     switch(state){
-                    case .Countdown:
-                        countDownTimerView(playerViews: playerViews)
-                    case .Result:
-                        Text("Time!")
-                            .font(.system(size: 48))
-                    default:
-                        Text("")
+                        case .Countdown:
+                            countDownTimerView(playerViews: playerViews)
+                        case .Result:
+                            Text("Time!")
+                                .font(.system(size: 48))
+                        default:
+                            Text("")
                     }
                 })
                 .frame(width: size.width, height: size.height / 2)
@@ -261,18 +261,22 @@ struct FingersView: View {
         // Make decisions and prediction for the current bot player
         fingersGame.runBotModels()
         
-        return Text("Bot \(fingersGame.currentPlayer().name) is predicting...")
-            .font(.system(size: 30))
-            .onReceive(timer) { time in
-                if botPredictionCounter == 0 {
-                    botPredictionCounter = MAX_BOT_PREDICTION_TIME
-                    print("Timer finished!")
-                    
-                    state = gameState.Countdown
-                } else {
-                    botPredictionCounter -= 1
+        return VStack {
+            Spacer()
+                .frame(height: 128)
+            Text("Bot \(fingersGame.currentPlayer().name) is predicting...")
+                .font(.system(size: 30))
+                .onReceive(timer) { time in
+                    if botPredictionCounter == 0 {
+                        botPredictionCounter = MAX_BOT_PREDICTION_TIME
+                        print("Timer finished!")
+                        
+                        state = gameState.Countdown
+                    } else {
+                        botPredictionCounter -= 1
+                    }
                 }
-            }
+        }
     }
     
     // Generates a resultView
@@ -292,6 +296,8 @@ struct FingersView: View {
         }
         
         return VStack {
+            Spacer()
+                .frame(height: 48)
             Text("Total fingers:")
                 .font(.system(size: 20))
             Text(fingersGame.getOutputOnCup().description)
@@ -304,6 +310,8 @@ struct FingersView: View {
                 .font(.system(size: 20))
             Text(fingersGame.currentPlayer().score.description)
                 .font(.system(size: 30))
+            Spacer()
+                .frame(height: 32)
             Button(action: {
                 state = gameState.Initial
                 fingersGame.resetCurrentPrediction()
