@@ -166,6 +166,7 @@ struct FingersView: View {
                                     if newValue == fingersGame.nr_humans {
                                         self.state = gameState.Predict
                                         self.updateScores = true
+                                        fingersGame.resetPressedNumber()
                                         print("----- Round \(fingersGame.getRound().description) -----")
                                     }
                                 }

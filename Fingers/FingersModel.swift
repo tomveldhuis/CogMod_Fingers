@@ -92,6 +92,16 @@ class FingersModel: ObservableObject {
         }
     }
     
+    func getHumanPlayers() -> [Player] {
+        var humanPlayers: [Player] = []
+        for player in players {
+            if player.playerType == .Human {
+                humanPlayers.append(player)
+            }
+        }
+        return humanPlayers
+    }
+    
     func getBotPlayers() -> [Player] {
         var botPlayers: [Player] = []
         for player in players {

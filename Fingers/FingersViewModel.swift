@@ -100,13 +100,7 @@ class FingersViewModel: ObservableObject {
         self.pressedNumber = newNumber
     }
     
-    func checkIfGameIsOver() -> Bool {
-        var isGameOver = false
-        for player in self.getPlayers() {
-            if player.score == 10 {
-                isGameOver = true
-            }
-        }
-        return isGameOver
+    func resetPressedNumber() {
+        self.pressedNumber = 0
     }
 }
