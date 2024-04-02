@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import GameplayKit
 
 class FingersModel: ObservableObject {
     var nr_humans: Int
@@ -25,11 +26,28 @@ class FingersModel: ObservableObject {
         var localPlayers: [Player] = []
         let localPlayerCount = nr_humans + nr_bots
         
+        let dist = GKGaussianDistribution(lowestValue: 0, highestValue: 10000)
+        
         for i in 0..<localPlayerCount{
+            // Determine break tendency
+            var breakTendency = dist.nextUniform() / 2
+            if dist.nextBool() {
+                breakTendency += 0.5
+            }
+            
+            // Add new Player to list of players
             if i < self.nr_bots {
-                localPlayers.append(Bot(id: i, name: "B\(i+1)", playerCount: localPlayerCount))
+                localPlayers.append(Bot(
+                    id: i,
+                    name: "B\(i+1)",
+                    playerCount: localPlayerCount,
+                    breakTendency: Double(breakTendency)
+                ))
             } else {
-                localPlayers.append(Human(id: i, name: "H\(i+1-nr_bots)"))
+                localPlayers.append(Human(
+                    id: i,
+                    name: "H\(i+1-nr_bots)"
+                ))
             }
         }
         localPlayers.shuffle()

@@ -95,8 +95,9 @@ class Bot: Player {
     var decision: Bool?
     
     var model: BotModel_Tom
+    var breakTendency: Double
     
-    init(id: Int, name: String, playerCount: Int) {
+    init(id: Int, name: String, playerCount: Int, breakTendency: Double) {
         self.id = id
         self.name = name
         self.playerType = .Bot
@@ -105,6 +106,8 @@ class Bot: Player {
         self.prediction = nil
         self.decision = nil
         
+        self.breakTendency = breakTendency
+        print(breakTendency)
         self.model = BotModel_Tom(name: name, playerCount: playerCount)
     }
     
