@@ -18,6 +18,7 @@ struct PlayerView: Identifiable {
     var id: String { player.name }
     
     @State var player: Player
+    @State var isPressing: Bool = false
     let position: CGPoint?
     
     func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, currentState: gameState) -> some View {
@@ -55,6 +56,7 @@ struct PlayerView: Identifiable {
                     print("-> \(self.id) pulls")
                 }
             }
+            self.isPressing = isPressing
         }
     }
 }
@@ -155,12 +157,10 @@ struct FingersView: View {
                 
                 switch(state){
                 case .Initial:
-                    Button("Predict") {
-                        self.state = gameState.Predict
-                        self.updateScores = true
-                        print("----- Round \(fingersGame.getRound().description) -----")
-                    }
-                    .position(x: size.width / 2, y: size.width / 2)
+                    Text("Place your finger on the cup")
+                        .position(x: size.width / 2, y: size.width / 2)
+                    
+                    initialView(playerViews: playerViews)
                 case .Predict:
                     generatePredictView()
                 case .Countdown:
@@ -201,6 +201,15 @@ struct FingersView: View {
             startAngle += angleInc
         }
         return playerViews
+    }
+    
+    private func allPlayersPressing(players: [PlayerView]) -> Bool {
+        for player in players {
+            if !player.isPressing && player.player.playerType == .Human {
+                return false
+            }
+        }
+        return true
     }
     
     // Generate numbered buttons for the PredictView
@@ -277,6 +286,17 @@ struct FingersView: View {
                     }
                 }
         }
+    }
+    
+    private func initialView(playerViews: [PlayerView]) -> some View {
+        //if playerViews.allSatisfy({ $0.isPressing }) {
+        if allPlayersPressing(players: playerViews) {
+            self.state = gameState.Predict
+            self.updateScores = true
+            print("----- Round \(fingersGame.getRound().description) -----")
+        }
+        
+        return EmptyView()
     }
     
     // Generates a resultView
