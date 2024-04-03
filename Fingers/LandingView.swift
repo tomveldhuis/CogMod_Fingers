@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import WebKit // Allows gif views
 
 struct LandingView: View {
     @Binding var showLandingView: Bool
@@ -34,15 +35,15 @@ struct LandingView: View {
                 
                 let allPlayerCount = humanPlayerCount + botPlayerCount;
                 
-                Text("How many human players?")
-                    .font(.title)
+                Text("Human players:")
+//                    .font(.title)
                     .padding()
                 editPlayers(currPlayerCount: $humanPlayerCount, minPlayerCount: 1, allPlayerCount: allPlayerCount)
                 
                 Divider()
                 
-                Text("How many bot players?")
-                    .font(.title)
+                Text("AI players:")
+//                    .font(.title)
                     .padding()
                 editPlayers(currPlayerCount: $botPlayerCount, minPlayerCount: 0, allPlayerCount: allPlayerCount)
                 
@@ -55,8 +56,8 @@ struct LandingView: View {
                     Text("Start")
                         .frame(width: geometry.size.width * 0.6)
                         .padding()
-                        .background(.blue)
-                        .foregroundColor(.white)
+                        .background(Color("PrimaryColor"))
+                        .foregroundColor(Color("SecondaryColor"))
                         .cornerRadius(20)
                 }
                 
@@ -64,14 +65,20 @@ struct LandingView: View {
                     Spacer()
                         .frame(height: 64)
                     
-                    Button("How to play") {
+//                    Button("How to play") {
+//                        self.showExplainView = true
+//                    }
+                    Button(action: {
                         self.showExplainView = true
+                    }) {
+                        Text("How to play")
+                            .foregroundColor(Color("SecondaryColor"))
                     }
                 }
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-            .background(Color.yellow)
+            .background(Color("BackgroundColor"))
             .cornerRadius(20)
         }
     }
@@ -85,6 +92,7 @@ struct LandingView: View {
             }) {
                 Image(systemName: "minus.circle")
                     .font(.largeTitle)
+                    .foregroundColor(Color("PrimaryColor"))
             }
             .opacity(
                 (currPlayerCount.wrappedValue > minPlayerCount && allPlayerCount > 2) ? 1 : 0
@@ -100,11 +108,15 @@ struct LandingView: View {
             }) {
                 Image(systemName: "plus.circle")
                     .font(.largeTitle)
+                    .foregroundColor(Color("PrimaryColor"))
             }
             .opacity(allPlayerCount < MAX_PLAYERS ? 1 : 0)
         }
     }
 }
+/// --------------------------------------
+///             Tutorial View
+/// --------------------------------------
 
 struct ExplainView: View {
     @Binding var showExplainView: Bool
@@ -133,7 +145,7 @@ struct ExplainView: View {
                             self.showExplainView = false
                         }) {
                             Image(systemName: "xmark")
-                                .foregroundColor(.blue)
+                                .foregroundColor(Color("PrimaryColor"))
                                 .imageScale(.large)
                         }
                         .padding()
@@ -141,6 +153,8 @@ struct ExplainView: View {
                     }
                     Spacer()
                         .frame(height: geometry.size.height / 2 - 25)
+                    
+                    GifImage("compressed_cropped_final")
                 }
             }
             

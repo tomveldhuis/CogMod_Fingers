@@ -44,8 +44,8 @@ struct PredictView: View {
                         Text(self.buttons[index].label)
                             .frame(maxWidth: .infinity)
                             .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
+                            .background(Color("PrimaryColor"))          // Background color of finger-circles
+                            .foregroundColor(Color("SecondaryColor"))   // Text color of finger-circles
                             .cornerRadius(8)
                     }
                     .padding(.horizontal)
@@ -53,7 +53,7 @@ struct PredictView: View {
             }
             .padding(.vertical)
         }
-        .background(Color.white)
+        .background(Color("BackgroundColor"))
         .cornerRadius(20)
     }
 }

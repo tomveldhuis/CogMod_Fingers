@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import StoreKit
 
 @main
 struct FingersApp: App {
@@ -19,7 +20,8 @@ struct FingersApp: App {
             if self.showExplainView {
                 ExplainView(showExplainView: $showExplainView)
                     .transition(.slide)
-                    .background(.yellow)
+                    .background(Color("BackgroundColor"))
+                    .environment(\.font, Font.custom("BDSupperRegular", size: 14))
             }
             else if self.showLandingView {
                 LandingView(
@@ -29,13 +31,15 @@ struct FingersApp: App {
                     botPlayerCount: $nr_bots
                 )
                 .transition(.slide)
-                .background(.yellow)
+                .background(Color("BackgroundColor"))
+                .environment(\.font, Font.custom("BDSupperRegular", size: 14))
             }
             else {
                 let game = FingersViewModel(n_humans: nr_humans, n_bots: nr_bots)
                 FingersView(fingersGame: game, resetGame: $showLandingView)
                     .transition(.slide)
-                    .background(.yellow)
+                    .background(Color("BackgroundColor"))
+                    .environment(\.font, Font.custom("BDSupperRegular", size: 14))
             }
         }
     }

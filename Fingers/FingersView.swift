@@ -21,17 +21,18 @@ struct PlayerView: Identifiable {
     let position: CGPoint?
     
     func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, currentState: gameState) -> some View {
-        var color = Color.black
+        var color = Color(.black) // Maybe change to black
         var text = id
         
         if currentState == .Result {
-            color = (player.decision!) ? Color.green : Color.red
+            color = (player.decision!) ? Color("PrimaryColor") : Color("BackgroundColor")
+//            border = (player.decision!) ? Color("PrimaryColor") : Color("BackgroundColor")
             text = player.score.description
         }
         
-        var strokeColor = color
+        var strokeColor = Color("PrimaryColor")
         if isCurrentPlayer {
-            strokeColor = Color.blue
+            strokeColor = Color.white
         }
         
         return ZStack {
@@ -39,7 +40,7 @@ struct PlayerView: Identifiable {
                 .strokeBorder(strokeColor, lineWidth: 5)
                 .background(Circle().fill(color))
             Text(text)
-                .foregroundColor(.white)
+                .foregroundColor(Color("SecondaryColor"))       // Text color inside of circle
         }
         .frame(width: size, height: size)
         .position(self.position!)
@@ -115,7 +116,7 @@ struct FingersView: View {
                                 self.showResetGameAlert = true
                             }) {
                                 Image(systemName: "arrow.counterclockwise")
-                                    .foregroundColor(.blue)
+                                    .foregroundColor(Color("PrimaryColor"))
                                     .imageScale(.large)
                             }
                             .padding()
@@ -124,9 +125,9 @@ struct FingersView: View {
                             .frame(height: size.height / 2 - 25)
                     }
                     
-                    // Big red circle
+                    // Spoof circle
                     Circle()
-                        .stroke(.blue, lineWidth: 5)
+                        .stroke(Color("PrimaryColor"), lineWidth: 5)
                         .frame(width: size.width - 2 * CGFloat(circleSize), height: size.height)
                     
                     // Circle for each player
@@ -329,9 +330,9 @@ struct FingersView: View {
             }) {
                 Image(systemName: "play.fill")
                     .font(.system(size: 24))
-                    .foregroundColor(.white)
+                    .foregroundColor(.accentColor)
                     .padding(12)
-                    .background(Color.blue)
+                    .background(.primary)
                     .clipShape(Circle())
             }
         }
