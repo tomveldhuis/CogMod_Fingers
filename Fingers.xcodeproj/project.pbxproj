@@ -14,7 +14,6 @@
 		E20BABD82BA9C9350038FB13 /* BotModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20BABD62BA9C9350038FB13 /* BotModelProtocol.swift */; };
 		E20BABDA2BA9C9AF0038FB13 /* PublicChunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = E20BABD92BA9C9AF0038FB13 /* PublicChunk.swift */; };
 		E2252E842BB581870054AE4C /* fingers_art.jpg in Resources */ = {isa = PBXBuildFile; fileRef = E2252E832BB581860054AE4C /* fingers_art.jpg */; };
-		E285E0742BA2EB4500C27CB7 /* LandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E285E0732BA2EB4500C27CB7 /* LandingView.swift */; };
 		E2B699952B8F8B8100246E91 /* FingersModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699942B8F8B8100246E91 /* FingersModel.swift */; };
 		E2B699972B8F8DF000246E91 /* FingersViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699962B8F8DF000246E91 /* FingersViewModel.swift */; };
 		E2B699AA2B8F974500246E91 /* SlotAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B6999B2B8F974500246E91 /* SlotAction.swift */; };
@@ -33,7 +32,6 @@
 		E2B699B72B8F974500246E91 /* Chunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699A82B8F974500246E91 /* Chunk.swift */; };
 		E2B699B82B8F974500246E91 /* Production.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2B699A92B8F974500246E91 /* Production.swift */; };
 		E2D01AAE2B83943400370E22 /* FingersApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01AAD2B83943400370E22 /* FingersApp.swift */; };
-		E2D01AB02B83943400370E22 /* FingersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01AAF2B83943400370E22 /* FingersView.swift */; };
 		E2D01AB22B83943900370E22 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2D01AB12B83943900370E22 /* Assets.xcassets */; };
 		E2D01AB52B83943900370E22 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E2D01AB42B83943900370E22 /* Preview Assets.xcassets */; };
 		E2D01ABF2B83943A00370E22 /* FingersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01ABE2B83943A00370E22 /* FingersTests.swift */; };
@@ -43,6 +41,8 @@
 		E2F87EB82BBA06B5009D91B9 /* logo_font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */; };
 		E2F87EBE2BBEB628009D91B9 /* BDSupperRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EBD2BBEB628009D91B9 /* BDSupperRegular.ttf */; };
 		E2F87EC02BBEB663009D91B9 /* compressed_cropped_final.gif in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EBF2BBEB663009D91B9 /* compressed_cropped_final.gif */; };
+		E2F87EC42BBEB8B7009D91B9 /* FingersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F87EC22BBEB8B7009D91B9 /* FingersView.swift */; };
+		E2F87EC52BBEB8B7009D91B9 /* LandingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F87EC32BBEB8B7009D91B9 /* LandingView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,7 +70,6 @@
 		E20BABD62BA9C9350038FB13 /* BotModelProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BotModelProtocol.swift; sourceTree = "<group>"; };
 		E20BABD92BA9C9AF0038FB13 /* PublicChunk.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PublicChunk.swift; sourceTree = "<group>"; };
 		E2252E832BB581860054AE4C /* fingers_art.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = fingers_art.jpg; sourceTree = "<group>"; };
-		E285E0732BA2EB4500C27CB7 /* LandingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LandingView.swift; sourceTree = "<group>"; };
 		E2B699942B8F8B8100246E91 /* FingersModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersModel.swift; sourceTree = "<group>"; };
 		E2B699962B8F8DF000246E91 /* FingersViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersViewModel.swift; sourceTree = "<group>"; };
 		E2B6999B2B8F974500246E91 /* SlotAction.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlotAction.swift; sourceTree = "<group>"; };
@@ -90,7 +89,6 @@
 		E2B699A92B8F974500246E91 /* Production.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Production.swift; sourceTree = "<group>"; };
 		E2D01AAA2B83943400370E22 /* Fingers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Fingers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D01AAD2B83943400370E22 /* FingersApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersApp.swift; sourceTree = "<group>"; };
-		E2D01AAF2B83943400370E22 /* FingersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersView.swift; sourceTree = "<group>"; };
 		E2D01AB12B83943900370E22 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E2D01AB42B83943900370E22 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E2D01ABA2B83943A00370E22 /* FingersTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FingersTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +101,8 @@
 		E2F87EB92BBA0851009D91B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		E2F87EBD2BBEB628009D91B9 /* BDSupperRegular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = BDSupperRegular.ttf; sourceTree = "<group>"; };
 		E2F87EBF2BBEB663009D91B9 /* compressed_cropped_final.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = compressed_cropped_final.gif; sourceTree = "<group>"; };
+		E2F87EC22BBEB8B7009D91B9 /* FingersView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FingersView.swift; sourceTree = "<group>"; };
+		E2F87EC32BBEB8B7009D91B9 /* LandingView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LandingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -201,10 +201,9 @@
 				E20BABD42BA9C9350038FB13 /* Models */,
 				E2B6999A2B8F974500246E91 /* ACT-R */,
 				E2D01AAD2B83943400370E22 /* FingersApp.swift */,
-				E285E0732BA2EB4500C27CB7 /* LandingView.swift */,
-				E2D01AAF2B83943400370E22 /* FingersView.swift */,
 				768587272BBDAAA3004D919D /* TutorialGif.swift */,
 				E2B699942B8F8B8100246E91 /* FingersModel.swift */,
+				E2F87EC12BBEB8B7009D91B9 /* Views */,
 				E2B699962B8F8DF000246E91 /* FingersViewModel.swift */,
 				E2D01AB12B83943900370E22 /* Assets.xcassets */,
 				E2D01AB32B83943900370E22 /* Preview Content */,
@@ -246,6 +245,15 @@
 				E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		E2F87EC12BBEB8B7009D91B9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E2F87EC22BBEB8B7009D91B9 /* FingersView.swift */,
+				E2F87EC32BBEB8B7009D91B9 /* LandingView.swift */,
+			);
+			path = Views;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -387,14 +395,14 @@
 				230E0D4F2BB42CCD00DA513A /* BotModel_David.swift in Sources */,
 				E2B699B82B8F974500246E91 /* Production.swift in Sources */,
 				E2B699AE2B8F974500246E91 /* Instantiation.swift in Sources */,
+				E2F87EC42BBEB8B7009D91B9 /* FingersView.swift in Sources */,
 				E2B699952B8F8B8100246E91 /* FingersModel.swift in Sources */,
 				E2B699B52B8F974500246E91 /* Parser.swift in Sources */,
 				23E68CFE2B920D96006DCFDB /* PredictView.swift in Sources */,
+				E2F87EC52BBEB8B7009D91B9 /* LandingView.swift in Sources */,
 				E20BABD72BA9C9350038FB13 /* BotModel_Tom.swift in Sources */,
-				E2D01AB02B83943400370E22 /* FingersView.swift in Sources */,
 				E2D01AAE2B83943400370E22 /* FingersApp.swift in Sources */,
 				E20BABD82BA9C9350038FB13 /* BotModelProtocol.swift in Sources */,
-				E285E0742BA2EB4500C27CB7 /* LandingView.swift in Sources */,
 				E2B699AD2B8F974500246E91 /* Procedural.swift in Sources */,
 				E2B699972B8F8DF000246E91 /* FingersViewModel.swift in Sources */,
 				E2B699AA2B8F974500246E91 /* SlotAction.swift in Sources */,

@@ -107,8 +107,8 @@ class Bot: Player {
         self.decision = nil
         
         self.breakTendency = breakTendency
-        print(breakTendency)
         self.model = BotModel_Tom(name: name, playerCount: playerCount)
+        //self.model = BotModel_Thijs(name: name, playerCount: playerCount, breakTendency: breakTendency)
     }
     
     func resetPrediction() {

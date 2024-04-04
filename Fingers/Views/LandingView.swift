@@ -124,20 +124,6 @@ struct ExplainView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                VStack {
-                    Text("How to play")
-                        .font(Font.custom("Keep on Truckin'", size: 48))
-                        .foregroundStyle(
-                            LinearGradient(
-                                colors: [.white, .yellow],
-                                startPoint: .top,
-                                endPoint: .bottom
-                            )
-                        )
-                        .glowBorder(color: .black, lineWidth: 5)
-                    Spacer()
-                }
-                
                 // Exit button
                 VStack {
                     HStack {
@@ -149,12 +135,68 @@ struct ExplainView: View {
                                 .imageScale(.large)
                         }
                         .padding()
+                        
+                        Text("How to play")
+                            .font(Font.custom("Keep on Truckin'", size: 48))
+                            .foregroundStyle(
+                                LinearGradient(
+                                    colors: [.white, .yellow],
+                                    startPoint: .top,
+                                    endPoint: .bottom
+                                )
+                            )
+                            .glowBorder(color: .black, lineWidth: 5)
+                        
                         Spacer()
                     }
                     Spacer()
-                        .frame(height: geometry.size.height / 2 - 25)
+                        .frame(height: 20)
+                    
+                    VStack {
+                        Text("Goal of the game: get the highest score!")
+                        
+                        Spacer()
+                            .frame(height: 10)
+                        
+                        Text("Before the countdown ends during each round,")
+                        Text("each player has to decide whether to:")
+                        
+                        Spacer()
+                            .frame(height: 10)
+                        
+                        VStack {
+                            Text("'stay'")
+                            Text("(keep your finger on your player button)")
+                            Spacer()
+                                .frame(height: 10)
+                            Text("or")
+                            Spacer()
+                                .frame(height: 10)
+                            Text("'pull'")
+                            Text("(leave your finger from your player button)")
+                        }
+                        
+                        Spacer()
+                            .frame(height: 10)
+                        
+                        VStack {
+                            Text("At the same time, the current player")
+                            Text("(the button with the white border)")
+                            Text("has to predict how many fingers will be left")
+                            Text("after the countdown.")
+                            
+                            Spacer()
+                                .frame(height: 10)
+                            
+                            Text("After the countdown, if the amount on")
+                            Text("'stayed' fingers is equal to the prediction ")
+                            Text("of the current player,")
+                            Text("the current player's score increases by 1.")
+                        }
+                    }
                     
                     GifImage("compressed_cropped_final")
+                        .frame(height: 800)
                 }
             }
             
