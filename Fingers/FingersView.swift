@@ -183,8 +183,8 @@ struct FingersView: View {
         }
         .alert(isPresented: $showResetGameAlert) {
             Alert(
-                title: Text("Reset game"),
-                message: Text("Are you sure you want to reset the game?"),
+                title: Text("Quit game"),
+                message: Text("Are you sure you want to quit the game?"),
                 primaryButton: .default(Text("Yes")) {
                     print("Reset game")
                     self.resetGame = true
@@ -309,30 +309,55 @@ struct FingersView: View {
         return VStack {
             Spacer()
                 .frame(height: 48)
-            Text("Total fingers:")
-                .font(.system(size: 20))
-            Text(fingersGame.getOutputOnCup().description)
-                .font(.system(size: 30))
-            Text("Player \(self.fingersGame.currentPlayer().name) predicted:")
-                .font(.system(size: 20))
-            Text(fingersGame.currentPlayer().prediction!.description)
-                .font(.system(size: 30))
-            Text("Player \(self.fingersGame.currentPlayer().name)'s new score is:")
-                .font(.system(size: 20))
-            Text(fingersGame.currentPlayer().score.description)
-                .font(.system(size: 30))
+            HStack {
+                VStack {
+                    Text("Predicted")
+                        .font(.system(size: 15))
+                    Text(fingersGame.currentPlayer().prediction!.description)
+                        .font(.system(size: 60))
+//                    Spacer()
+//                        .frame(width:20)
+                }
+                Spacer()
+                    .frame(width:40)
+                VStack {
+                    Text("/")
+                        .font(.system(size: 100))
+//                    Spacer(minLength:50)
+                }
+                Spacer()
+                    .frame(width:45)
+                VStack {
+                    Text("Outcome")
+                        .font(.system(size:15))
+                    Text(fingersGame.getOutputOnCup().description)
+                        .font(.system(size: 60))
+//                    Spacer()
+//                        .frame(height:5)
+                }
+            }
+            
+            
+//            Text("Player \(self.fingersGame.currentPlayer().name) predicted:")
+//                .font(.system(size: 20))
+//            Text(fingersGame.currentPlayer().prediction!.description)
+//                .font(.system(size: 30))
+//            Text("Player \(self.fingersGame.currentPlayer().name)'s new score is:")
+//                .font(.system(size: 20))
+//            Text(fingersGame.currentPlayer().score.description)
+//                .font(.system(size: 30))
             Spacer()
-                .frame(height: 32)
+                .frame(height: 55)
             Button(action: {
                 state = gameState.Initial
                 fingersGame.resetCurrentPrediction()
                 fingersGame.nextRound()
             }) {
                 Image(systemName: "play.fill")
-                    .font(.system(size: 24))
-                    .foregroundColor(.accentColor)
+                    .font(.title)
+                    .foregroundColor(Color("SecondaryColor"))
                     .padding(12)
-                    .background(.primary)
+                    .background(Color("PrimaryColor"))
                     .clipShape(Circle())
             }
         }

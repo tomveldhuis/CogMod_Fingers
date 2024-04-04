@@ -36,7 +36,7 @@ struct LandingView: View {
                 let allPlayerCount = humanPlayerCount + botPlayerCount;
                 
                 Text("Human players:")
-//                    .font(.title)
+                    .font(.title)
                     .padding()
                 editPlayers(currPlayerCount: $humanPlayerCount, minPlayerCount: 1, allPlayerCount: allPlayerCount)
                 
