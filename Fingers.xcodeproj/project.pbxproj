@@ -37,6 +37,8 @@
 		E2D01ABF2B83943A00370E22 /* FingersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01ABE2B83943A00370E22 /* FingersTests.swift */; };
 		E2D01AC92B83943A00370E22 /* FingersUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01AC82B83943A00370E22 /* FingersUITests.swift */; };
 		E2D01ACB2B83943A00370E22 /* FingersUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2D01ACA2B83943A00370E22 /* FingersUITestsLaunchTests.swift */; };
+		E2DFB2AC2BC9AC20007FCFBF /* BotModel_Thijs.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2DFB2AB2BC9AC20007FCFBF /* BotModel_Thijs.swift */; };
+		E2DFB2AE2BCA9C84007FCFBF /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E2DFB2AD2BCA9C84007FCFBF /* Launch Screen.storyboard */; };
 		E2F87EB52BB99128009D91B9 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2F87EB42BB99128009D91B9 /* Player.swift */; };
 		E2F87EB82BBA06B5009D91B9 /* logo_font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */; };
 		E2F87EBE2BBEB628009D91B9 /* BDSupperRegular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E2F87EBD2BBEB628009D91B9 /* BDSupperRegular.ttf */; };
@@ -96,6 +98,8 @@
 		E2D01AC42B83943A00370E22 /* FingersUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FingersUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E2D01AC82B83943A00370E22 /* FingersUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersUITests.swift; sourceTree = "<group>"; };
 		E2D01ACA2B83943A00370E22 /* FingersUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingersUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		E2DFB2AB2BC9AC20007FCFBF /* BotModel_Thijs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BotModel_Thijs.swift; sourceTree = "<group>"; };
+		E2DFB2AD2BCA9C84007FCFBF /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		E2F87EB42BB99128009D91B9 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		E2F87EB72BBA06B5009D91B9 /* logo_font.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = logo_font.ttf; sourceTree = "<group>"; };
 		E2F87EB92BBA0851009D91B9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -133,6 +137,7 @@
 		E20BABD42BA9C9350038FB13 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				E2DFB2AB2BC9AC20007FCFBF /* BotModel_Thijs.swift */,
 				E20BABD52BA9C9350038FB13 /* BotModel_Tom.swift */,
 				E20BABD62BA9C9350038FB13 /* BotModelProtocol.swift */,
 				230E0D4E2BB42CCD00DA513A /* BotModel_David.swift */,
@@ -206,8 +211,8 @@
 				E2F87EC12BBEB8B7009D91B9 /* Views */,
 				E2B699962B8F8DF000246E91 /* FingersViewModel.swift */,
 				E2D01AB12B83943900370E22 /* Assets.xcassets */,
+				E2DFB2AD2BCA9C84007FCFBF /* Launch Screen.storyboard */,
 				E2D01AB32B83943900370E22 /* Preview Content */,
-				23E68CFD2B920D96006DCFDB /* PredictView.swift */,
 				E2F87EB42BB99128009D91B9 /* Player.swift */,
 			);
 			path = Fingers;
@@ -250,6 +255,7 @@
 		E2F87EC12BBEB8B7009D91B9 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				23E68CFD2B920D96006DCFDB /* PredictView.swift */,
 				E2F87EC22BBEB8B7009D91B9 /* FingersView.swift */,
 				E2F87EC32BBEB8B7009D91B9 /* LandingView.swift */,
 			);
@@ -366,6 +372,7 @@
 				E2D01AB22B83943900370E22 /* Assets.xcassets in Resources */,
 				E2252E842BB581870054AE4C /* fingers_art.jpg in Resources */,
 				E2F87EB82BBA06B5009D91B9 /* logo_font.ttf in Resources */,
+				E2DFB2AE2BCA9C84007FCFBF /* Launch Screen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -400,6 +407,7 @@
 				E2B699B52B8F974500246E91 /* Parser.swift in Sources */,
 				23E68CFE2B920D96006DCFDB /* PredictView.swift in Sources */,
 				E2F87EC52BBEB8B7009D91B9 /* LandingView.swift in Sources */,
+				E2DFB2AC2BC9AC20007FCFBF /* BotModel_Thijs.swift in Sources */,
 				E20BABD72BA9C9350038FB13 /* BotModel_Tom.swift in Sources */,
 				E2D01AAE2B83943400370E22 /* FingersApp.swift in Sources */,
 				E20BABD82BA9C9350038FB13 /* BotModelProtocol.swift in Sources */,
@@ -584,6 +592,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -620,6 +629,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

@@ -7,24 +7,17 @@
 
 import SwiftUI
 
-enum gameState {
-    case Initial
-    case Predict
-    case Countdown
-    case Result
-}
-
 struct PlayerView: Identifiable {
     var id: String { player.name }
     
     @State var player: Player
     let position: CGPoint?
     
-    func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool, currentState: gameState) -> some View {
+    func getButton(size: CGFloat, gameobj: FingersViewModel, isCurrentPlayer: Bool) -> some View {
         var color = Color(.black) // Maybe change to black
         var text = id
         
-        if currentState == .Result {
+        if gameobj.currentState() == .Result {
             color = (player.decision!) ? Color("PrimaryColor") : Color("BackgroundColor")
 //            border = (player.decision!) ? Color("PrimaryColor") : Color("BackgroundColor")
             text = player.score.description
@@ -48,7 +41,7 @@ struct PlayerView: Identifiable {
         .onLongPressGesture(minimumDuration: .infinity) {
             //pressed = true
         } onPressingChanged: { isPressing in
-            if self.player.playerType == .Human && currentState != .Result {
+            if self.player.playerType == .Human && gameobj.currentState() != .Result {
                 if isPressing {
                     player.makeDecision(decision: true)
                     print("-> \(self.id) stays")
@@ -56,7 +49,7 @@ struct PlayerView: Identifiable {
                     player.makeDecision(decision: false)
                     print("-> \(self.id) pulls")
                 }
-                if currentState == .Initial {
+                if gameobj.currentState() == .Initial {
                     gameobj.updatePressedNumber()
                 }
             }
@@ -114,7 +107,9 @@ struct FingersView: View {
                         HStack {
                             Spacer()
                             Button(action: {
-                                self.showResetGameAlert = true
+                                if !(state == .Predict && fingersGame.currentPlayer().playerType == .Bot) {
+                                    self.showResetGameAlert = true
+                                }
                             }) {
                                 Image(systemName: "arrow.counterclockwise")
                                     .foregroundColor(Color("PrimaryColor"))
@@ -136,8 +131,7 @@ struct FingersView: View {
                         player.getButton(
                             size: CGFloat(circleSize),
                             gameobj: fingersGame,
-                            isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false,
-                            currentState: state
+                            isCurrentPlayer: (player.player.id == fingersGame.currentPlayer().id) ? true : false
                         )
                     }
                     
@@ -166,7 +160,8 @@ struct FingersView: View {
                                 .position(x: size.width / 2, y: size.width / 2)
                                 .onReceive(fingersGame.$pressedNumber) { newValue in
                                     if newValue == fingersGame.nr_humans {
-                                        self.state = gameState.Predict
+                                        //self.state = gameState.Predict
+                                        fingersGame.nextState()
                                         self.updateScores = true
                                         fingersGame.resetPressedNumber()
                                         print("----- Round \(fingersGame.getRound().description) -----")
@@ -183,6 +178,7 @@ struct FingersView: View {
             })
         }
         .alert(isPresented: $showResetGameAlert) {
+            // Quit game screen
             Alert(
                 title: Text("Quit game"),
                 message: Text("Are you sure you want to quit the game?"),
@@ -191,6 +187,10 @@ struct FingersView: View {
                     self.resetGame = true
                 },
                 secondaryButton: .cancel(Text("No")))
+        }
+        .onReceive(fingersGame.model.$state) { newState in
+            // Update game state
+            state = newState
         }
     }
 
@@ -228,7 +228,8 @@ struct FingersView: View {
                 // Make decisions for bot players
                 fingersGame.runBotModels()
                 
-                state = gameState.Countdown
+                //state = gameState.Countdown
+                fingersGame.nextState()
             })
             buttons.append(button)
         }
@@ -260,7 +261,8 @@ struct FingersView: View {
                 if countDownCounter == 0 {
                     countDownCounter = MAX_COUNTDOWN_TIME
                     textToUpdate = ""
-                    state = gameState.Result
+                    //state = gameState.Result
+                    fingersGame.nextState()
                 } else {
                     textToUpdate = countDownCounter.description
                     countDownCounter -= 1
@@ -283,7 +285,8 @@ struct FingersView: View {
                         botPredictionCounter = MAX_BOT_PREDICTION_TIME
                         print("Timer finished!")
                         
-                        state = gameState.Countdown
+                        //state = gameState.Countdown
+                        fingersGame.nextState()
                     } else {
                         botPredictionCounter -= 1
                     }
@@ -350,7 +353,8 @@ struct FingersView: View {
             Spacer()
                 .frame(height: 55)
             Button(action: {
-                state = gameState.Initial
+                //state = gameState.Initial
+                fingersGame.nextState()
                 fingersGame.resetCurrentPrediction()
                 fingersGame.nextRound()
             }) {

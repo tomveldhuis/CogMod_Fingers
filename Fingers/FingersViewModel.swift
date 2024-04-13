@@ -21,6 +21,14 @@ class FingersViewModel: ObservableObject {
         self.pressedNumber = 0
     }
     
+    func currentState() -> gameState {
+        return model.state
+    }
+    
+    func nextState() {
+        model.nextState()
+    }
+    
     func getPlayers() -> [Player] {
         return self.model.players
     }

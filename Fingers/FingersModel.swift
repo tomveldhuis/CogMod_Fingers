@@ -8,7 +8,16 @@
 import Foundation
 import GameplayKit
 
+enum gameState {
+    case Initial
+    case Predict
+    case Countdown
+    case Result
+}
+
 class FingersModel: ObservableObject {
+    @Published var state: gameState
+    
     var nr_humans: Int
     var nr_bots: Int
     var playerCount: Int
@@ -18,7 +27,9 @@ class FingersModel: ObservableObject {
     @Published var currentPlayerIdx: Int
     var currentPlayerType: playerType
     
-    init(nr_humans: Int, nr_bots: Int){
+    init(nr_humans: Int, nr_bots: Int) {
+        self.state = .Initial
+        
         self.nr_humans = nr_humans
         self.nr_bots = nr_bots
         self.round = 1
@@ -58,6 +69,19 @@ class FingersModel: ObservableObject {
         self.currentPlayerType = localPlayers[currentPlayerIdx].playerType
         self.players = localPlayers
         print(self.players)
+    }
+    
+    func nextState() {
+        switch(self.state){
+            case .Initial:
+                self.state = .Predict
+            case .Predict:
+                self.state = .Countdown
+            case .Countdown:
+                self.state = .Result
+            case .Result:
+                self.state = .Initial
+        }
     }
     
     // Returns the total number of fingers on the cup
