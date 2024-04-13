@@ -20,7 +20,7 @@ struct LandingView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                Text("Fingers")
+                Text("Finger   \n   Spoof")
                     .font(Font.custom("Keep on Truckin'", size: 64))
                     .foregroundStyle(
                         LinearGradient(
@@ -31,24 +31,25 @@ struct LandingView: View {
                     )
                     .glowBorder(color: .black, lineWidth: 5)
                 Spacer()
-                    .frame(height: 48)
+                    .frame(height: 60)
+                
                 
                 let allPlayerCount = humanPlayerCount + botPlayerCount;
                 
                 Text("Human players:")
-                    .font(.title)
+                    .font(.custom("BDSupperRegular", size: 20))
                     .padding()
                 editPlayers(currPlayerCount: $humanPlayerCount, minPlayerCount: 1, allPlayerCount: allPlayerCount)
                 
                 Divider()
                 
                 Text("AI players:")
-//                    .font(.title)
+                   .font(.custom("BDSupperRegular", size: 20))
                     .padding()
                 editPlayers(currPlayerCount: $botPlayerCount, minPlayerCount: 0, allPlayerCount: allPlayerCount)
                 
                 Spacer()
-                    .frame(height: 30)
+                    .frame(height: 40)
                 
                 Button(action: {
                     self.showLandingView = false
@@ -74,7 +75,11 @@ struct LandingView: View {
                         Text("How to play")
                             .foregroundColor(Color("SecondaryColor"))
                     }
+                    Spacer()
+                        .frame(height: 10)
                 }
+                
+                
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
             .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
@@ -126,6 +131,8 @@ struct ExplainView: View {
             ZStack {
                 // Exit button
                 VStack {
+                    Spacer()
+                        .frame(height:30)
                     HStack {
                         Button(action: {
                             self.showExplainView = false
@@ -137,7 +144,7 @@ struct ExplainView: View {
                         .padding()
                         
                         Text("How to play")
-                            .font(Font.custom("Keep on Truckin'", size: 48))
+                            .font(Font.custom("Keep on Truckin'", size: 46))
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [.white, .yellow],
@@ -150,53 +157,94 @@ struct ExplainView: View {
                         Spacer()
                     }
                     Spacer()
-                        .frame(height: 20)
+                        .frame(height: 30)
                     
-                    VStack {
-                        Text("Goal of the game: get the highest score!")
+                    ScrollView {
+                        Text("Goal of the game:\nget the highest score!")
+                            .fontWeight(.bold)
+                            .font(.custom("BDSupperRegular", size: 18))
+                            .multilineTextAlignment(.center)
                         
                         Spacer()
-                            .frame(height: 10)
+                            .frame(height: 40)
                         
-                        Text("Before the countdown ends during each round,")
-                        Text("each player has to decide whether to:")
-                        
-                        Spacer()
-                            .frame(height: 10)
-                        
-                        VStack {
-                            Text("'stay'")
-                            Text("(keep your finger on your player button)")
-                            Spacer()
-                                .frame(height: 10)
-                            Text("or")
-                            Spacer()
-                                .frame(height: 10)
-                            Text("'pull'")
-                            Text("(leave your finger from your player button)")
+                        HStack {
+                            GifImage("compressed_cropped_final")
+                                .frame( width:250, height: 250)
                         }
                         
-                        Spacer()
-                            .frame(height: 10)
                         
-                        VStack {
-                            Text("At the same time, the current player")
-                            Text("(the button with the white border)")
-                            Text("has to predict how many fingers will be left")
-                            Text("after the countdown.")
+                        
+                        Spacer()
+                            .frame(height: 40)
+                        
+                        HStack {
                             
-                            Spacer()
-                                .frame(height: 10)
+                            VStack {
+                                Text("1)")
+                                    .font(.custom("BDSupperRegular", size: 20))
+                                Spacer()
+                                    .frame(height: 40)
+                                Text("2)")
+                                    .font(.custom("BDSupperRegular", size: 20))
+                                Spacer()
+                                    .frame(height: 125)
+                                Text("3)")
+                                    .font(.custom("BDSupperRegular", size: 20))
+                                Spacer()
+                                    .frame(height: 40)
+                                Text("4)")
+                                    .font(.custom("BDSupperRegular", size: 20))
+                                Spacer()
+                                    .frame(height: 10)
+                            }
                             
-                            Text("After the countdown, if the amount on")
-                            Text("'stayed' fingers is equal to the prediction ")
-                            Text("of the current player,")
-                            Text("the current player's score increases by 1.")
+                            VStack {
+                                VStack {
+                                    Text("Players take turns, counting down\nfrom 3 to 0")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                    
+                                }
+                                
+                                Spacer()
+                                    .frame(height: 20)
+                                
+                                VStack {
+                                    Text("When the countdown reaches 0,\neveryone decides to:")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                    Spacer()
+                                        .frame(height: 10)
+                                    Text("Stay - keep your finger on your\nplayer button")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                    Spacer()
+                                        .frame(height: 5)
+                                    Text("Pull - pull your finger away from\nyour button")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                }
+                                
+                                Spacer()
+                                    .frame(height: 20)
+                                
+                                VStack {
+                                    Text("In your turn, you must try to predict\nhow many fingers remain")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                }
+                                
+                                Spacer()
+                                    .frame(height: 20)
+                                
+                                VStack {
+                                    Text("Got it right? Then you've earned a point!")
+                                        .font(.custom("BDSupperRegular", size: 18))
+                                }
+                                
+                            }
                         }
+                        
                     }
+                    .frame(width:330)
+                    .multilineTextAlignment(.leading)
                     
-                    GifImage("compressed_cropped_final")
-                        .frame(height: 800)
                 }
             }
             

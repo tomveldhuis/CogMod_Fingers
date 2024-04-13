@@ -41,6 +41,7 @@ struct PlayerView: Identifiable {
                 .background(Circle().fill(color))
             Text(text)
                 .foregroundColor(Color("SecondaryColor"))       // Text color inside of circle
+                .font(.custom("BDSupperRegular", size: 17))
         }
         .frame(width: size, height: size)
         .position(self.position!)
@@ -146,7 +147,7 @@ struct FingersView: View {
                             countDownTimerView(playerViews: playerViews)
                         case .Result:
                             Text("Time!")
-                                .font(.system(size: 48))
+                                .font(Font.custom("BDSupperRegular", size: 40))
                         default:
                             Text("")
                     }
@@ -161,7 +162,7 @@ struct FingersView: View {
                     case .Initial:
                         VStack {
                             Text("Place your fingers on the cup")
-                                .font(.system(size: 20))
+                                .font(.custom("BDSupperRegular", size: 26))
                                 .position(x: size.width / 2, y: size.width / 2)
                                 .onReceive(fingersGame.$pressedNumber) { newValue in
                                     if newValue == fingersGame.nr_humans {
@@ -254,7 +255,7 @@ struct FingersView: View {
     // Generates a countDownTimerView
     private func countDownTimerView(playerViews: [PlayerView]) -> some View {
         return Text(textToUpdate)
-            .font(.system(size: 48))
+            .font(.custom("BDSupperRegular", size: 48))
             .onReceive(timer) { time in
                 if countDownCounter == 0 {
                     countDownCounter = MAX_COUNTDOWN_TIME
@@ -276,7 +277,7 @@ struct FingersView: View {
             Spacer()
                 .frame(height: 128)
             Text("Bot \(fingersGame.currentPlayer().name) is predicting...")
-                .font(.system(size: 30))
+                .font(.custom("BDSupperRegular", size: 30))
                 .onReceive(timer) { time in
                     if botPredictionCounter == 0 {
                         botPredictionCounter = MAX_BOT_PREDICTION_TIME
