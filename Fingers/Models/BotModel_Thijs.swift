@@ -120,8 +120,8 @@ struct BotModel_Thijs : BotModelProtocol {
                     let imaginal = model.buffers["imaginal"]!
                     model.dm.addToDM(imaginal)
 
-                    // Return to the "deciding" state and wait for the next round
-                    goal.setSlot(slot: "state", value: "deciding")
+                    // Return to the "deciding_extreme" state and wait for the next round
+                    goal.setSlot(slot: "state", value: "deciding_extreme")
                     done = true
                     addToTrace(string: "Waiting for the next round...")
                     model.waitingForAction = true

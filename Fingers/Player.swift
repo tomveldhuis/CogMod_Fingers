@@ -94,7 +94,7 @@ class Bot: Player {
     var prediction: Int?
     var decision: Bool?
     
-    var model: BotModel_Tom
+    var model: BotModelProtocol
     var breakTendency: Double
     
     init(id: Int, name: String, playerCount: Int, breakTendency: Double) {
@@ -102,13 +102,18 @@ class Bot: Player {
         self.name = name
         self.playerType = .Bot
         self.score = 0
+        self.breakTendency = breakTendency
         
         self.prediction = nil
         self.decision = nil
         
-        self.breakTendency = breakTendency
-        self.model = BotModel_Tom(name: name, playerCount: playerCount)
-        //self.model = BotModel_Thijs(name: name, playerCount: playerCount, breakTendency: breakTendency)
+        // Randomly pick one of the two models
+        let breakModel = Bool.random()
+        if breakModel {
+            self.model = BotModel_Thijs(name: name, playerCount: playerCount, breakTendency: breakTendency)
+        } else {
+            self.model = BotModel_Tom(name: name, playerCount: playerCount)
+        }
     }
     
     func resetPrediction() {

@@ -13,6 +13,7 @@ protocol BotModelProtocol {
     mutating func run(isActive: Bool)
     func modifyLastAction(slot: String, value: String) -> Bool
     mutating func update()
+    func updateActionChunk(outputOnCup: Int, currentPrediction: Int)
 }
 
 extension BotModelProtocol {
